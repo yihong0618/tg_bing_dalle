@@ -1,5 +1,5 @@
 # tg_bing_dalle
-tg bing dalle-3
+tg bot using bing dalle-3
 
 ## Link Show 
 
@@ -13,4 +13,8 @@ https://t.me/c/1941649644/2798
 3. 拿到 tg 的 token, 去 Google 搜索，去问 ChatGPT 都可以，需要在 [botfather](https://t.me/BotFather) 那拿
 4. pip install -r requirements.txt
 5. python tg.py ${tg_token} ${bing_cookie} 启动
+
+## Appreciation
+
+- Thank you, that's enough. Just enjoy it.
 
