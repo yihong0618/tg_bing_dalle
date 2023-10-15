@@ -4,6 +4,9 @@ import random
 
 import telebot
 from BingImageCreator import ImageGen
+from threading import Thread
+from telebot.types import InputMediaPhoto, InputMediaVideo
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -14,6 +17,11 @@ if __name__ == "__main__":
     bing_cookie = options.bing_cookie
     if not os.path.exists("tg_images"):
         os.mkdir("tg_images")
+
+    def save_images(i, images, path):
+        # save the images in another thread call
+        print("Running save images")
+        i.save_images(images, path)
 
     def reply_dalle_image(message):
         start_words = "prompt:"
@@ -28,12 +36,15 @@ if __name__ == "__main__":
         i = ImageGen(bing_cookie)
         bot.reply_to(message, "Using bing DALL-E 3 generating images please wait")
         images = i.get_images(s)
-        i.save_images(images, path)
-        images_count = len(list(os.listdir(path)))
-        print(images_count)
-        index = random.randint(images_count - len(images), images_count - 1)
-        with open(os.path.join(path, str(index)) + ".jpeg", "rb") as f:
-            bot.send_photo(message.chat.id, f, reply_to_message_id=message.message_id)
+        photos_list = [InputMediaPhoto(i) for i in images]
+        Thread(target=save_images, args=(i, images, path)).start()
+        if photos_list:
+            bot.send_media_group(
+                message.chat.id, photos_list, reply_to_message_id=message.message_id
+            )
+        else:
+            bot.reply_to(message, "Your prompt generate error")
+
         return
 
     @bot.message_handler(func=reply_dalle_image)
