@@ -35,7 +35,12 @@ if __name__ == "__main__":
         s = message.text[len(start_words) :].strip()
         i = ImageGen(bing_cookie)
         bot.reply_to(message, "Using bing DALL-E 3 generating images please wait")
-        images = i.get_images(s)
+        try:
+            images = i.get_images(s)
+        except Exception as e:
+            print(str(e))
+            bot.reply_to(message, "Ban from Bing DALL-E 3")
+            return
         photos_list = [InputMediaPhoto(i) for i in images]
         Thread(target=save_images, args=(i, images, path)).start()
         if photos_list:
