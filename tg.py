@@ -34,7 +34,14 @@ if __name__ == "__main__":
             os.mkdir(path)
         s = message.text[len(start_words) :].strip()
         i = ImageGen(bing_cookie)
-        bot.reply_to(message, "Using bing DALL-E 3 generating images please wait")
+        limit = i.get_limit_left()
+        if limit < 2:
+            bot.reply_to(message, f"We can not use it, cause we have no limit here")
+        else:
+            bot.reply_to(
+                message,
+                f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
+            )
         try:
             images = i.get_images(s)
         except Exception as e:
@@ -45,7 +52,10 @@ if __name__ == "__main__":
         Thread(target=save_images, args=(i, images, path)).start()
         if photos_list:
             bot.send_media_group(
-                message.chat.id, photos_list, reply_to_message_id=message.message_id
+                message.chat.id,
+                photos_list,
+                reply_to_message_id=message.message_id,
+                disable_notification=True,
             )
         else:
             bot.reply_to(message, "Your prompt generate error")
