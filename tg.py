@@ -24,15 +24,15 @@ if __name__ == "__main__":
         i.save_images(images, path)
 
     def reply_dalle_image(message):
-        start_words = "prompt:"
-        # bot.send_message(message.chat.id, f'{message.chat.id}')
-        if not message.text.startswith(start_words):
-            return
+        start_words = ["prompt:", "/prompt"]
+        prefix = next((w for w in start_words if message.text.startswith(w)), None)
+        if not prefix:
+            return False
         print(message.from_user.id)
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
             os.mkdir(path)
-        s = message.text[len(start_words) :].strip()
+        s = message.text[len(prefix) :].strip()
         i = ImageGen(bing_cookie)
         limit = i.get_limit_left()
         if limit < 2:
