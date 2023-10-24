@@ -25,7 +25,7 @@ if __name__ == "__main__":
         start_words = ["prompt:", "/prompt"]
         prefix = next((w for w in start_words if message.text.startswith(w)), None)
         if not prefix:
-            return False
+            return
         print(message.from_user.id)
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
