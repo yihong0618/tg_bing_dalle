@@ -1,11 +1,9 @@
 import argparse
 import os
-import random
-
 import telebot
 from BingImageCreator import ImageGen
 from threading import Thread
-from telebot.types import InputMediaPhoto, InputMediaVideo
+from telebot.types import InputMediaPhoto
 
 
 if __name__ == "__main__":
@@ -24,19 +22,19 @@ if __name__ == "__main__":
         i.save_images(images, path)
 
     def reply_dalle_image(message):
-        start_words = "prompt:"
-        # bot.send_message(message.chat.id, f'{message.chat.id}')
-        if not message.text.startswith(start_words):
+        start_words = ["prompt:", "/prompt"]
+        prefix = next((w for w in start_words if message.text.startswith(w)), None)
+        if not prefix:
             return
         print(message.from_user.id)
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
             os.mkdir(path)
-        s = message.text[len(start_words) :].strip()
+        s = message.text[len(prefix) :].strip()
         i = ImageGen(bing_cookie)
         limit = i.get_limit_left()
         if limit < 2:
-            bot.reply_to(message, f"We can not use it, cause we have no limit here")
+            bot.reply_to(message, "We can not use it, cause we have no limit here")
         else:
             bot.reply_to(
                 message,

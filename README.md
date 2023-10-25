@@ -2,9 +2,13 @@
 
 tg bot using bing dalle-3
 
-## Link Show
+## Usage
 
-https://t.me/c/1941649644/2798
+Live Show: https://t.me/c/1941649644/2798
+
+In any chat with the bot, send your message like "prompt: something" or "/prompt something". 
+
+You can set "/prompt" as a bot command (botfather -> edit bot -> edit commands).
 
 ## How to
 
