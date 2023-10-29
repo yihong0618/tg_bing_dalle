@@ -30,7 +30,10 @@ if __name__ == "__main__":
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
             os.mkdir(path)
-        s = message.text[len(prefix) :].strip()
+        s: str = message.text[len(prefix) :].strip()
+        # Remove the first word if it is a @username, because it is part of the command if the bot is in a group chat.
+        if s.startswith("@"):
+            s = " ".join(s.split(" ")[1:])
         i = ImageGen(bing_cookie)
         limit = i.get_limit_left()
         if limit < 2:
