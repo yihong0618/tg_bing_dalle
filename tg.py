@@ -36,19 +36,21 @@ if __name__ == "__main__":
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
             os.mkdir(path)
-        # Find an available cookie
+
+        # Find a cookie within the limit
+        within_limit = False
         global bing_cookie
         for cnt in range(len(bing_cookie)):
             i = ImageGen(bing_cookie[cnt])
             limit = i.get_limit_left()
             if limit > 1:
+                within_limit = True
                 break
-            i = None
-            bot.reply_to(message, "We can not use it, cause we have no limit here. Tring next cookie...")
+            bot.reply_to(message, "Out of limit. Tring next cookie...")
 
-        if not i:
+        if not within_limit:
             bot.reply_to(message, "No cookie is with limit left.")
-            return
+            # No return here, because we can still use the cookie with no limit left.
         else:
             # Rotate the cookie list so that the next time we use the available cookie
             bing_cookie = bing_cookie[cnt:] + bing_cookie[:cnt]
@@ -56,6 +58,7 @@ if __name__ == "__main__":
                 message,
                 f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
             )
+
         # Generate the images
         try:
             images = i.get_images(s)
