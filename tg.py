@@ -4,6 +4,7 @@ import telebot
 from typing import List
 from BingImageCreator import ImageGen
 from threading import Thread
+from itertools import cycle
 from telebot.types import InputMediaPhoto
 
 
@@ -13,7 +14,9 @@ if __name__ == "__main__":
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
-    bing_cookie: List[str] = options.bing_cookie
+    bing_cookie: List[str] = cycle(options.bing_cookie)
+    bing_cookie_cnt = len(options.bing_cookie)
+    
     if not os.path.exists("tg_images"):
         os.mkdir("tg_images")
 
@@ -39,9 +42,8 @@ if __name__ == "__main__":
 
         # Find a cookie within the limit
         within_limit = False
-        global bing_cookie
-        for cnt in range(len(bing_cookie)):
-            i = ImageGen(bing_cookie[cnt])
+        for _ in range(bing_cookie_cnt):
+            i = ImageGen(next(bing_cookie))
             limit = i.get_limit_left()
             if limit > 1:
                 within_limit = True
@@ -52,8 +54,6 @@ if __name__ == "__main__":
             bot.reply_to(message, "No cookie is with limit left.")
             # No return here, because we can still use the cookie with no limit left.
         else:
-            # Rotate the cookie list so that the next time we use the available cookie
-            bing_cookie = bing_cookie[cnt:] + bing_cookie[:cnt]
             bot.reply_to(
                 message,
                 f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
