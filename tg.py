@@ -1,12 +1,11 @@
 import argparse
 import os
-import telebot
-from typing import List
-from BingImageCreator import ImageGen
-from threading import Thread
 from itertools import cycle
-from telebot.types import InputMediaPhoto
+from threading import Thread
 
+import telebot
+from BingImageCreator import ImageGen
+from telebot.types import InputMediaPhoto
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -16,7 +15,7 @@ if __name__ == "__main__":
     bot = telebot.TeleBot(options.tg_token)
     bing_cookie = cycle(options.bing_cookie)
     bing_cookie_cnt = len(options.bing_cookie)
-    
+
     if not os.path.exists("tg_images"):
         os.mkdir("tg_images")
 
@@ -35,7 +34,7 @@ if __name__ == "__main__":
         if s.startswith("@"):
             s = " ".join(s.split(" ")[1:])
         # Prepare the local folder
-        print(message.from_user.id)
+        print(f"Message from user id {message.from_user.id}")
         path = os.path.join("tg_images", str(message.from_user.id))
         if not os.path.exists(path):
             os.mkdir(path)
@@ -78,7 +77,7 @@ if __name__ == "__main__":
                 disable_notification=True,
             )
         else:
-            bot.reply_to(message, "Your prompt generate error")
+            bot.reply_to(message, "Generate images error")
 
         return
 
@@ -87,6 +86,7 @@ if __name__ == "__main__":
         pass
 
     def main():
+        print("Starting tg bing DALL-E 3 images bot.")
         bot.infinity_polling()
 
     main()
