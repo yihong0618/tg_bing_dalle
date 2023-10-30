@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
-    bing_cookie: List[str] = cycle(options.bing_cookie)
+    bing_cookie = cycle(options.bing_cookie)
     bing_cookie_cnt = len(options.bing_cookie)
     
     if not os.path.exists("tg_images"):
