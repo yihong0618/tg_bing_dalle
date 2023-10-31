@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
+    bot_name = bot.get_me().username
     bing_cookie = cycle(options.bing_cookie)
     bing_cookie_cnt = len(options.bing_cookie)
 
@@ -29,9 +30,11 @@ if __name__ == "__main__":
         prefix = next((w for w in start_words if message.text.startswith(w)), None)
         if not prefix:
             return
-        # Remove the first word if it is a @username, because it is part of the command if the bot is in a group chat.
         s: str = message.text[len(prefix) :].strip()
+        # Remove the first word if it is a @username, because it is part of the command if the bot is in a group chat.
         if s.startswith("@"):
+            if not s.startswith(f"@{bot_name} "):
+                return
             s = " ".join(s.split(" ")[1:])
         # Prepare the local folder
         print(f"Message from user id {message.from_user.id}")
