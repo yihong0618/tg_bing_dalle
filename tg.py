@@ -14,7 +14,7 @@ if __name__ == "__main__":
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
     bot_name = bot.get_me().username
-    bing_cookie = cycle(options.bing_cookie)
+    bing_cookie_pool = cycle(options.bing_cookie)
     bing_cookie_cnt = len(options.bing_cookie)
 
     if not os.path.exists("tg_images"):
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # Find a cookie within the limit
         within_limit = False
         for _ in range(bing_cookie_cnt):
-            i = ImageGen(next(bing_cookie))
+            i = ImageGen(next(bing_cookie_pool))
             limit = i.get_limit_left()
             if limit > 1:
                 within_limit = True
