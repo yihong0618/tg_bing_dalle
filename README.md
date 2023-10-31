@@ -15,7 +15,9 @@ You can set "/prompt" as a bot command (botfather -> edit bot -> edit commands).
 How to make your own DALL-E 3 bing tg bot.
 
 1. Make sure your ip can open https://bing.com/create not jump cn.bing (can use GitHub to login）
-2. Use https://bing.com/create create a new png, F12 in chrome to get cookie string as bing_cookie
+2. Use https://bing.com/images/create create a new png, F12 in chrome to get cookie string as bing_cookie
+
+   ***Highly recommanded to use Edge or Chrome to get the cookie. We encountered errors when using cookie got by Firefox.***
 3. Get tg token, ask Google or ChatGPT, need get it from [botfather](https://t.me/BotFather) 
 4. pip install -r requirements.txt
 5. python tg.py '${tg_token}' '${bing_cookie}'
