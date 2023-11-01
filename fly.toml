@@ -1,0 +1,5 @@
+app = "img-gen-bot"
+primary_region = "nrt"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
