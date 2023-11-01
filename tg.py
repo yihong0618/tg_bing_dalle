@@ -14,8 +14,15 @@ if __name__ == "__main__":
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
     bot_name = bot.get_me().username
-    bing_cookie_pool = cycle(options.bing_cookie)
-    bing_cookie_cnt = len(options.bing_cookie)
+    bing_image_obj_list = [ImageGen(i) for i in options.bing_cookie]
+    bing_cookie_cnt = len(bing_image_obj_list)
+    for index, image_obj in enumerate(bing_image_obj_list):
+        try:
+            image_obj.get_limit_left()
+        except Exception as e:
+            print(f"your {index} cookie is wrong please check error: {str(e)}")
+            raise
+    bing_cookie_pool = cycle(bing_image_obj_list)
 
     if not os.path.exists("tg_images"):
         os.mkdir("tg_images")
@@ -36,6 +43,18 @@ if __name__ == "__main__":
             if not s.startswith(f"@{bot_name} "):
                 return
             s = " ".join(s.split(" ")[1:])
+        if s == "quota?":
+            quota_string = "\n".join(
+                [
+                    f"Cookie{index} left quota: {v.get_limit_left()}."
+                    for index, v in enumerate(bing_image_obj_list)
+                ]
+            )
+            bot.reply_to(
+                message,
+                f"Quota stats: \nWe have {len(bing_image_obj_list)} cookies\n{quota_string}",
+            )
+            return
         # Prepare the local folder
         print(f"Message from user id {message.from_user.id}")
         path = os.path.join("tg_images", str(message.from_user.id))
@@ -45,8 +64,8 @@ if __name__ == "__main__":
         # Find a cookie within the limit
         within_limit = False
         for _ in range(bing_cookie_cnt):
-            i = ImageGen(next(bing_cookie_pool))
-            limit = i.get_limit_left()
+            image_obj = next(bing_cookie_pool)
+            limit = image_obj.get_limit_left()
             if limit > 1:
                 within_limit = True
                 break
@@ -63,13 +82,13 @@ if __name__ == "__main__":
 
         # Generate the images
         try:
-            images = i.get_images(s)
+            images = image_obj.get_images(s)
         except Exception as e:
             print(str(e))
             bot.reply_to(message, "Ban from Bing DALL-E 3")
             return
         # Save the images locally
-        Thread(target=save_images, args=(i, images, path)).start()
+        Thread(target=save_images, args=(image_obj, images, path)).start()
         # Send the images
         photos_list = [InputMediaPhoto(i) for i in images]
         if photos_list:
