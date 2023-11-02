@@ -161,3 +161,5 @@ cython_debug/
 tg_images/
 nohup.out
 
+
+start.sh
