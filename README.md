@@ -42,6 +42,11 @@ options:
 
 ```
 
+## Contribution
+
+- Any issues PR welcome.
+- Any other bot type like slack/discord welcome
+
 ## Deploy to Fly.io
 
 1. Install [flyctl](https://fly.io/docs/getting-started/installing-flyctl/)
