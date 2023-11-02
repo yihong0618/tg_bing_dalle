@@ -8,4 +8,4 @@ COPY tg.py .
 ENV tg_token=$tg_token
 ENV bing_cookie=$bing_cookie
 
-CMD python3 tg.py $tg_token "$bing_cookie"
+CMD python3 tg.py $tg_token $bing_cookie
