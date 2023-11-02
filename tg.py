@@ -69,7 +69,6 @@ if __name__ == "__main__":
             if limit > 1:
                 within_limit = True
                 break
-            bot.reply_to(message, "Out of limit. Tring next cookie...")
 
         if not within_limit:
             bot.reply_to(message, "No cookie is with limit left.")
