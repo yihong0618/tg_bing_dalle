@@ -26,19 +26,18 @@ How to make your own DALL-E 3 bing tg bot.
 
 Or you can use docker to run it:
 1. docker build -t tg_bing_dalle .
-2. docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' -network host tg_bing_dalle
+2. docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' [-e bing_cookie_1='${bing_cookie_1}'] --network host tg_bing_dalle
 
 *You can provide multiple cookies, to increase the use limit. see:*
 
 ```
-usage: tg.py [-h] tg_token bing_cookie [bing_cookie ...]
-
-positional arguments:
-  tg_token     tg token
-  bing_cookie  bing cookie
+usage: tg.py [-h] [--tg_token TG_TOKEN] [--bing_cookie BING_COOKIE [BING_COOKIE ...]]
 
 options:
-  -h, --help   show this help message and exit
+  -h, --help            show this help message and exit
+  --tg_token TG_TOKEN   tg token
+  --bing_cookie BING_COOKIE [BING_COOKIE ...]
+                        bing cookie
 
 ```
 
