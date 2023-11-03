@@ -22,7 +22,7 @@ How to make your own DALL-E 3 bing tg bot.
 
 3. Get tg token, ask Google or ChatGPT, need get it from [botfather](https://t.me/BotFather)
 4. pip install -r requirements.txt
-5. python tg.py '${tg_token}' '${bing_cookie}'
+5. python tg.py --tg_token '${tg_token}' --bing_cookie '${bing_cookie}'
 
 Or you can use docker to run it:
 1. docker build -t tg_bing_dalle .
@@ -55,7 +55,14 @@ options:
    > [!NOTE]
    > Change the app name to your own name in fly.toml
 4. `flyctl secrets set tg_token=`_your tg_token_
-5. `flyctl secrets set bing_cookie=`_your bing_cookie_
+5. Configure Bing cookies:
+   - Required:
+     - `flyctl secrets set bing_cookie=`_your bing_cookie_
+   - Optional:
+     - `flyctl secrets set bing_cookie_1=`_your bing_cookie_1_
+     - `flyctl secrets set bing_cookie_2=`_your bing_cookie_2_
+     - `flyctl secrets set bing_cookie_3=`_your bing_cookie_3_  
+     ...
 6. `flyctl deploy`
 
 ## Appreciation

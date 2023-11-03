@@ -9,8 +9,8 @@ from telebot.types import InputMediaPhoto
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("tg_token", help="tg token")
-    parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
+    parser.add_argument("--tg_token", default=os.environ.get('tg_token'), help="tg token")
+    parser.add_argument("--bing_cookie", default=[v for k, v in os.environ.items() if k.startswith("bing_cookie")], help="bing cookie", nargs="+")
     options = parser.parse_args()
     bot = telebot.TeleBot(options.tg_token)
     bot_name = bot.get_me().username
