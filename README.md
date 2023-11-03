@@ -1,6 +1,6 @@
 # tg_bing_dalle
 
-tg bot using bing dalle-3
+Telegram bot using bing dalle-3
 
 ## Usage
 
@@ -61,3 +61,4 @@ options:
 ## Appreciation
 
 - Thank you, that's enough. Just enjoy it.
+

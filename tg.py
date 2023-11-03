@@ -71,7 +71,10 @@ if __name__ == "__main__":
                 break
 
         if not within_limit:
-            bot.reply_to(message, "No cookie is with limit left.")
+            bot.reply_to(
+                message,
+                "No cookie is with limit left, will wait a long time and maybe fail",
+            )
             # No return here, because we can still use the cookie with no limit left.
         else:
             bot.reply_to(
@@ -84,7 +87,10 @@ if __name__ == "__main__":
             images = image_obj.get_images(s)
         except Exception as e:
             print(str(e))
-            bot.reply_to(message, "Ban from Bing DALL-E 3")
+            bot.reply_to(
+                message,
+                "Your prompt ban from Bing DALL-E 3, please change it and do not use the same prompt.",
+            )
             return
         # Save the images locally
         Thread(target=save_images, args=(image_obj, images, path)).start()

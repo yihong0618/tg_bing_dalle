@@ -1,2 +1,3 @@
-git+https://github.com/yihong0618/BingImageCreator.git
+BingImageCreator-fork
 pyTelegramBotAPI
+
