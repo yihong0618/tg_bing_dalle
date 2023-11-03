@@ -1,1 +1,14 @@
-fly.toml
+# 1. Ignore everything
+**
+
+# 2. Add files and directories that should be included
+!Procfile
+!requirements.txt
+!tg.py
+
+# 3. Bonus step: ignore any unnecessary files that may be inside those allowed directories in 2
+**/*~
+**/*.log
+**/.DS_Store
+**/Thumbs.db
+
