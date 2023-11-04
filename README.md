@@ -15,6 +15,10 @@ You can set "/prompt" as a bot command (BotFather -> edit bot -> edit commands).
 
 How to make your own DALL-E 3 bing tg bot.
 
+### Method 1 (Run Python directly)
+
+**Read this first if you are new to code**
+
 1. Make sure your ip can open https://bing.com/create not jump cn.bing (can use GitHub to login）
 2. Use https://bing.com/images/create create a new png, F12 in chrome to get cookie string as bing_cookie
 
@@ -25,17 +29,6 @@ How to make your own DALL-E 3 bing tg bot.
 3. Get tg token, ask Google or ChatGPT, need get it from [BotFather](https://t.me/BotFather)
 4. `pip install -r requirements.txt`
 5. `python tg.py '${tg_token}' '${bing_cookie}'`
-
-Or you can use docker to run it:
-1. `docker build -t tg_bing_dalle .`
-2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
-
-Or you can start with `run.sh`:
-
-1. Save your tg token to the `.token` file
-2. Save your cookies to `.cookies`, one cookie per line
-3. `chmod +x run.sh`
-4. `./run.sh`
 
 *You can provide multiple cookies, to increase the use limit. see:*
 
@@ -50,6 +43,22 @@ options:
   -h, --help   show this help message and exit
 
 ```
+
+### Method 2 (Run from a shell script)
+
+Or you can start with `run.sh`:
+
+1. Save your tg token to a new `.token` file in this directory.
+2. Save your cookies to a new `.cookies` file in this directory, one cookie per line.
+3. `chmod +x run.sh`
+4. `./run.sh`
+
+### Method 3 (Run from Docker)
+
+Or you can use docker to run it:
+1. `docker build -t tg_bing_dalle .`
+2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
+
 
 ## Contribution
 
