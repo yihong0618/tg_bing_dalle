@@ -33,15 +33,21 @@ if __name__ == "__main__":
         i.save_images(images, path)
 
     def reply_dalle_image(message):
-        start_words = ["prompt:", "/prompt"]
-        prefix = next((w for w in start_words if message.text.startswith(w)), None)
-        if not prefix:
-            return
-        s: str = message.text[len(prefix) :].strip()
-        # Remove the first word if it is a @username, because it is part of the command if the bot is in a group chat.
+        s: str = message.text.strip()
         if s.startswith("@"):
             if not s.startswith(f"@{bot_name} "):
                 return
+            s = s[len(bot_name) + 2 :]
+        else:
+            start_words = ["prompt:", "/prompt"]
+            prefix = next((w for w in start_words if s.startswith(w)), None)
+            if not prefix:
+                return
+            s: str = s[len(prefix) :]
+            # If the first word is '@bot_name', remove it as it is considered part of the command when in a group chat.
+            if s.startswith("@"):
+                if not s.startswith(f"@{bot_name} "):
+                    return
             s = " ".join(s.split(" ")[1:])
         if s == "quota?":
             quota_string = "\n".join(
