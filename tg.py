@@ -12,8 +12,17 @@ if __name__ == "__main__":
     parser.add_argument("tg_token", help="tg token")
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     options = parser.parse_args()
+
     bot = telebot.TeleBot(options.tg_token)
     bot_name = bot.get_me().username
+    bot.delete_my_commands(scope=None, language_code=None)
+    bot.set_my_commands(
+        commands=[
+            telebot.types.BotCommand("prompt", "prompt of dalle-3"),
+            telebot.types.BotCommand("quota", "cookie left quota"),
+        ],
+    )
+
     bing_image_obj_list = [ImageGen(i) for i in options.bing_cookie]
     bing_cookie_cnt = len(bing_image_obj_list)
     for index, image_obj in enumerate(bing_image_obj_list):
@@ -31,6 +40,21 @@ if __name__ == "__main__":
         # save the images in another thread call
         print("Running save images")
         i.save_images(images, path)
+
+    @bot.message_handler(commands=["quota"])
+    def cookie_left_quota(message):
+        quota_string = "\n".join(
+            [
+                f"Cookie{index} left quota: {v.get_limit_left()}."
+                for index, v in enumerate(bing_image_obj_list)
+            ]
+        )
+        bot.reply_to(
+            message,
+            f"Quota stats: \nWe have {len(bing_image_obj_list)} cookies\n{quota_string}",
+        )
+
+        return
 
     def extract_prompt(message):
         """
@@ -59,21 +83,13 @@ if __name__ == "__main__":
             s = " ".join(s.split(" ")[1:])
         return s
 
+    @bot.message_handler(commands=["prompt"])
     def reply_dalle_image(message):
         s = extract_prompt(message)
         if not s:
             return
         if s == "quota?":
-            quota_string = "\n".join(
-                [
-                    f"Cookie{index} left quota: {v.get_limit_left()}."
-                    for index, v in enumerate(bing_image_obj_list)
-                ]
-            )
-            bot.reply_to(
-                message,
-                f"Quota stats: \nWe have {len(bing_image_obj_list)} cookies\n{quota_string}",
-            )
+            cookie_left_quota(message)
             return
         # Prepare the local folder
         print(f"Message from user id {message.from_user.id}")
