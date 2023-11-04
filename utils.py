@@ -2,11 +2,10 @@ import os
 from typing import List, Optional, Tuple
 
 from BingImageCreator import ImageGen  # type: ignore
-from telebot import TeleBot  # type: ignore
 from telebot.types import Message  # type: ignore
 
 
-def extract_prompt(message: TeleBot, bot_name: str) -> Optional[str]:
+def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
     """
     This function filters messages for prompts.
 
