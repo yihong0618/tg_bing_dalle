@@ -32,23 +32,37 @@ if __name__ == "__main__":
         print("Running save images")
         i.save_images(images, path)
 
-    def reply_dalle_image(message):
+    def extract_prompt(message):
+        """
+        This function filters messages for prompts.
+
+        a prompt: start with @bot or 'prompt:' or '/prompt '
+
+        Returns:
+          str: If it is not a prompt, return None. Otherwise, return the trimmed prefix of the actual prompt.
+        """
         s: str = message.text.strip()
         if s.startswith("@"):
             if not s.startswith(f"@{bot_name} "):
-                return
+                return None
             s = s[len(bot_name) + 2 :]
         else:
             start_words = ["prompt:", "/prompt"]
             prefix = next((w for w in start_words if s.startswith(w)), None)
             if not prefix:
-                return
+                return None
             s: str = s[len(prefix) :]
             # If the first word is '@bot_name', remove it as it is considered part of the command when in a group chat.
             if s.startswith("@"):
                 if not s.startswith(f"@{bot_name} "):
                     return
             s = " ".join(s.split(" ")[1:])
+        return s
+
+    def reply_dalle_image(message):
+        s = extract_prompt(message)
+        if not s:
+            return
         if s == "quota?":
             quota_string = "\n".join(
                 [
