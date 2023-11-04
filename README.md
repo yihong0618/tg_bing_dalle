@@ -6,10 +6,8 @@ Telegram bot using bing dalle-3
 
 Live Show: https://t.me/c/1941649644/2798
 
-In any chat with the bot, send your message like "prompt: something" or "/prompt something" or "@bot_name something".
-You can also send your message like "prompt: quota?" to get the limit.
-
-You can set "/prompt" as a bot command (BotFather -> edit bot -> edit commands).
+In any chat with the bot, send your message like `prompt: something` or `/prompt something` or `@bot_name something`.
+You can also send your message like `/quota` or `quota?` or `@bot_name quota?` to get the limit.
 
 ## How to
 
