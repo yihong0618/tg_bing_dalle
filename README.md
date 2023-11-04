@@ -28,7 +28,7 @@ How to make your own DALL-E 3 bing tg bot.
 4. `pip install -r requirements.txt`
 5. `python tg.py '${tg_token}' '${bing_cookie}'`
 
-*You can provide multiple cookies, to increase the use limit. see:*
+_You can provide multiple cookies, to increase the use limit. see:_
 
 ```
 usage: tg.py [-h] tg_token bing_cookie [bing_cookie ...]
@@ -54,14 +54,15 @@ Or you can start with `run.sh`:
 ### Method 3 (Run from Docker)
 
 Or you can use docker to run it:
+
 1. `docker build -t tg_bing_dalle .`
 2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
-
 
 ## Contribution
 
 - Any issues PR welcome.
 - Any other bot type like slack/discord welcome
+- Before PR, use `pip install -U black` then `black .` first
 
 ## Deploy to Fly.io
 
@@ -77,4 +78,3 @@ Or you can use docker to run it:
 ## Appreciation
 
 - Thank you, that's enough. Just enjoy it.
-
