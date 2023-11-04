@@ -1,28 +1,35 @@
 import argparse
 import os
 from itertools import cycle
-from threading import Thread
 
-import telebot
-from BingImageCreator import ImageGen
-from telebot.types import InputMediaPhoto
+from BingImageCreator import ImageGen  # type: ignore
+from telebot import TeleBot  # type: ignore
+from telebot.types import BotCommand, Message  # type: ignore
+
+from responder import respond_prompt, respond_quota
+from utils import extract_prompt
 
 if __name__ == "__main__":
+    # Init args
     parser = argparse.ArgumentParser()
     parser.add_argument("tg_token", help="tg token")
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     options = parser.parse_args()
+    print("Arg parse done.")
 
-    bot = telebot.TeleBot(options.tg_token)
+    # Init bot
+    bot = TeleBot(options.tg_token)
     bot_name = bot.get_me().username
     bot.delete_my_commands(scope=None, language_code=None)
     bot.set_my_commands(
         commands=[
-            telebot.types.BotCommand("prompt", "prompt of dalle-3"),
-            telebot.types.BotCommand("quota", "cookie left quota"),
+            BotCommand("prompt", "prompt of dalle-3"),
+            BotCommand("quota", "cookie left quota"),
         ],
     )
+    print("Bot init done.")
 
+    # Init BingImageCreator
     bing_image_obj_list = [ImageGen(i) for i in options.bing_cookie]
     bing_cookie_cnt = len(bing_image_obj_list)
     for index, image_obj in enumerate(bing_image_obj_list):
@@ -32,124 +39,33 @@ if __name__ == "__main__":
             print(f"your {index} cookie is wrong please check error: {str(e)}")
             raise
     bing_cookie_pool = cycle(bing_image_obj_list)
+    print("BingImageCreator init done.")
 
+    # Init local folder
     if not os.path.exists("tg_images"):
         os.mkdir("tg_images")
+    print("Local folder init done.")
 
-    def save_images(i, images, path):
-        # save the images in another thread call
-        print("Running save images")
-        i.save_images(images, path)
-
+    # Handlers
     @bot.message_handler(commands=["quota"])
-    def cookie_left_quota(message):
-        quota_string = "\n".join(
-            [
-                f"Cookie{index} left quota: {v.get_limit_left()}."
-                for index, v in enumerate(bing_image_obj_list)
-            ]
-        )
-        bot.reply_to(
-            message,
-            f"Quota stats: \nWe have {len(bing_image_obj_list)} cookies\n{quota_string}",
-        )
-
-        return
-
-    def extract_prompt(message):
-        """
-        This function filters messages for prompts.
-
-        a prompt: start with @bot or 'prompt:' or '/prompt '
-
-        Returns:
-          str: If it is not a prompt, return None. Otherwise, return the trimmed prefix of the actual prompt.
-        """
-        s: str = message.text.strip()
-        if s.startswith("@"):
-            if not s.startswith(f"@{bot_name} "):
-                return None
-            s = s[len(bot_name) + 2 :]
-        else:
-            start_words = ["prompt:", "/prompt"]
-            prefix = next((w for w in start_words if s.startswith(w)), None)
-            if not prefix:
-                return None
-            s: str = s[len(prefix) :]
-            # If the first word is '@bot_name', remove it as it is considered part of the command when in a group chat.
-            if s.startswith("@"):
-                if not s.startswith(f"@{bot_name} "):
-                    return
-            s = " ".join(s.split(" ")[1:])
-        return s
+    @bot.message_handler(regexp="^quota?")
+    def quota_handler(message: Message) -> None:
+        print(f"{message.from_user.id} asks quota...")
+        respond_quota(bot, message, bing_image_obj_list)
 
     @bot.message_handler(commands=["prompt"])
-    def reply_dalle_image(message):
-        s = extract_prompt(message)
+    @bot.message_handler(regexp="^prompt:")
+    @bot.message_handler(regexp=f"^@{bot_name} ")
+    def prompt_handler(message: Message) -> None:
+        s = extract_prompt(message, bot_name)
         if not s:
             return
         if s == "quota?":
-            cookie_left_quota(message)
+            quota_handler(message)
             return
-        # Prepare the local folder
-        print(f"Message from user id {message.from_user.id}")
-        path = os.path.join("tg_images", str(message.from_user.id))
-        if not os.path.exists(path):
-            os.mkdir(path)
+        print(f"{message.from_user.id} send prompt: {s}")
+        respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
 
-        # Find a cookie within the limit
-        within_limit = False
-        for _ in range(bing_cookie_cnt):
-            image_obj = next(bing_cookie_pool)
-            limit = image_obj.get_limit_left()
-            if limit > 1:
-                within_limit = True
-                break
-
-        if not within_limit:
-            bot.reply_to(
-                message,
-                "No cookie is with limit left, will wait a long time and maybe fail",
-            )
-            # No return here, because we can still use the cookie with no limit left.
-        else:
-            bot.reply_to(
-                message,
-                f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
-            )
-
-        # Generate the images
-        try:
-            images = image_obj.get_images(s)
-        except Exception as e:
-            print(str(e))
-            bot.reply_to(
-                message,
-                "Your prompt ban from Bing DALL-E 3, please change it and do not use the same prompt.",
-            )
-            return
-        # Save the images locally
-        Thread(target=save_images, args=(image_obj, images, path)).start()
-        # Send the images
-        photos_list = [InputMediaPhoto(i) for i in images]
-        if photos_list:
-            bot.send_media_group(
-                message.chat.id,
-                photos_list,
-                reply_to_message_id=message.message_id,
-                disable_notification=True,
-            )
-        else:
-            bot.reply_to(message, "Generate images error")
-
-        return
-
-    @bot.message_handler(func=reply_dalle_image)
-    def handle(message):
-        pass
-
-    def main():
-        print("Starting tg bing DALL-E 3 images bot.")
-        bot.infinity_polling()
-
-    main()
+    # Start bot
+    print("Starting tg bing DALL-E 3 images bot.")
+    bot.infinity_polling()
