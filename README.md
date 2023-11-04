@@ -21,12 +21,12 @@ How to make your own DALL-E 3 bing tg bot.
    **_Highly recommanded to use Edge or Chrome to get the cookie, and don't use incognito/privacy mode. We encountered errors when using cookie got by Firefox._**
 
 3. Get tg token, ask Google or ChatGPT, need get it from [botfather](https://t.me/BotFather)
-4. pip install -r requirements.txt
-5. python tg.py '${tg_token}' '${bing_cookie}'
+4. `pip install -r requirements.txt`
+5. `python tg.py '${tg_token}' '${bing_cookie}'`
 
 Or you can use docker to run it:
-1. docker build -t tg_bing_dalle .
-2. docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' -network host tg_bing_dalle
+1. `docker build -t tg_bing_dalle .`
+2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
 
 *You can provide multiple cookies, to increase the use limit. see:*
 
