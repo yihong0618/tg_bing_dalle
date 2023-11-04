@@ -30,6 +30,13 @@ Or you can use docker to run it:
 1. `docker build -t tg_bing_dalle .`
 2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
 
+Or you can start with `run.sh`:
+
+1. Save your tg token to the `.token` file
+2. Save your cookies to `.cookies`, one cookie per line
+3. `chmod +x run.sh`
+4. `./run.sh`
+
 *You can provide multiple cookies, to increase the use limit. see:*
 
 ```
