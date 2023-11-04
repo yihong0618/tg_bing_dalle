@@ -6,10 +6,10 @@ Telegram bot using bing dalle-3
 
 Live Show: https://t.me/c/1941649644/2798
 
-In any chat with the bot, send your message like "prompt: something" or "/prompt something".
+In any chat with the bot, send your message like "prompt: something" or "/prompt something" or "@bot_name something".
 You can also send your message like "prompt: quota?" to get the limit.
 
-You can set "/prompt" as a bot command (botfather -> edit bot -> edit commands).
+You can set "/prompt" as a bot command (BotFather -> edit bot -> edit commands).
 
 ## How to
 
@@ -22,7 +22,7 @@ How to make your own DALL-E 3 bing tg bot.
 
    ![get cookies](./how_to_get_the_cookies.png)
 
-3. Get tg token, ask Google or ChatGPT, need get it from [botfather](https://t.me/BotFather)
+3. Get tg token, ask Google or ChatGPT, need get it from [BotFather](https://t.me/BotFather)
 4. `pip install -r requirements.txt`
 5. `python tg.py '${tg_token}' '${bing_cookie}'`
 

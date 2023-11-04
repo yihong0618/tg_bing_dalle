@@ -56,18 +56,38 @@ if __name__ == "__main__":
 
         return
 
-    @bot.message_handler(commands=["prompt"])
-    def reply_dalle_image(message):
-        start_words = ["prompt:", "/prompt"]
-        prefix = next((w for w in start_words if message.text.startswith(w)), None)
-        if not prefix:
-            return
-        s: str = message.text[len(prefix) :].strip()
-        # Remove the first word if it is a @username, because it is part of the command if the bot is in a group chat.
+    def extract_prompt(message):
+        """
+        This function filters messages for prompts.
+
+        a prompt: start with @bot or 'prompt:' or '/prompt '
+
+        Returns:
+          str: If it is not a prompt, return None. Otherwise, return the trimmed prefix of the actual prompt.
+        """
+        s: str = message.text.strip()
         if s.startswith("@"):
             if not s.startswith(f"@{bot_name} "):
-                return
+                return None
+            s = s[len(bot_name) + 2 :]
+        else:
+            start_words = ["prompt:", "/prompt"]
+            prefix = next((w for w in start_words if s.startswith(w)), None)
+            if not prefix:
+                return None
+            s: str = s[len(prefix) :]
+            # If the first word is '@bot_name', remove it as it is considered part of the command when in a group chat.
+            if s.startswith("@"):
+                if not s.startswith(f"@{bot_name} "):
+                    return
             s = " ".join(s.split(" ")[1:])
+        return s
+
+    @bot.message_handler(commands=["prompt"])
+    def reply_dalle_image(message):
+        s = extract_prompt(message)
+        if not s:
+            return
         if s == "quota?":
             cookie_left_quota(message)
             return
