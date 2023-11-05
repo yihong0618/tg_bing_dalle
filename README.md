@@ -75,6 +75,11 @@ Then add the option `-c config.toml` to start the server.
 python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
 ```
 
+## @bot
+
+To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
+Please note that this may decrease the efficiency of the bot since it will have to process all messages in the group, potentially overloading the server running it.
+
 ## Contribution
 
 - Any issue reports or PRs are welcome.
