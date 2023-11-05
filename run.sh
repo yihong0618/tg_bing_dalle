@@ -2,8 +2,13 @@
 
 echo "Checking prerequisites..."
 
+# Check if using pyenv
+if [[ "$PYENV_VIRTUAL_ENV" ]]; then
+  echo "Currently, you are in a virtual environment managed by pyenv..."
+  echo "It is assumed that you have already installed the requirements."
+  echo "If not, please execute: python -m pip install -r requirements.txt"
 # Check if venv exists, create if needed
-if [ ! -f "venv/bin/python" ]; then
+elif [ ! -f "venv/bin/python" ]; then
   echo "Creating virtual environment and installing requirements..."
   python -m venv venv
   venv/bin/python -m pip install -r requirements.txt
