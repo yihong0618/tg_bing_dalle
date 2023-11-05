@@ -13,6 +13,15 @@ if [ -f "/credentials/.cookies" ]; then
     fi
   done < <(grep . /credentials/.cookies)
   bing_cookies="${bing_cookies% }"
+else
+  bing_cookies=""
+  while IFS='=' read -r key value
+  do
+    if [[ $key == bing_cookie* ]]; then
+      bing_cookies="$bing_cookies'${value}' "
+    fi
+  done < <(env)
+  bing_cookies="${bing_cookies% }"
 fi
 
 # Exec main process

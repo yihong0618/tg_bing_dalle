@@ -1,5 +1,15 @@
+# fly.toml app configuration file generated for img-gen-bot on 2023-11-06T00:37:06+08:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
 app = "img-gen-bot"
 primary_region = "nrt"
 
 [build]
-  builder = "paketobuildpacks/builder:base"
+  dockerfile = "Dockerfile"
+  ignorefile = ".dockerignore"
+
+[env]
+TZ="Asia/Shanghai"
+
