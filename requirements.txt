@@ -1,3 +1,4 @@
 BingImageCreator-fork
 pyTelegramBotAPI
-
+toml
+openai
