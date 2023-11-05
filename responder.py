@@ -23,10 +23,6 @@ def respond_quota(
     )
 
 
-def respond_pro_prompt(bot: TeleBot, msg: Message, prompt: str):
-    bot.reply_to(msg, f"Your prompt has changed by openai to {prompt}")
-
-
 def respond_prompt(
     bot: TeleBot,
     message: Message,

@@ -3,11 +3,12 @@ import os
 from itertools import cycle
 
 import openai
+import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
 from telebot import TeleBot  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
-from responder import respond_prompt, respond_quota, respond_pro_prompt
+from responder import respond_prompt, respond_quota
 from utils import extract_prompt, pro_prompt_by_openai
 
 
@@ -17,50 +18,33 @@ def main():
     parser.add_argument("tg_token", help="tg token")
     parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
     parser.add_argument(
-        "--openai_api_key",
-        help="openai api key to rewrite prompt",
-        nargs="?",
+        "-c",
+        dest="CONFIG_FILE",
+        help="additional config file",
         default=None,
     )
-    parser.add_argument(
-        "--openai_model",
-        help="openai model to use",
-        nargs="?",
-        default="gpt-3.5-turbo",
-        const="",
-    )
-    parser.add_argument(
-        "--api_base",
-        nargs="?",
-        dest="api_base",
-        help="specify base url other than the OpenAI's official API address",
-        default=None,
-    )
-    parser.add_argument(
-        "--deployment_id",
-        nargs="?",
-        dest="deployment_id",
-        help="specify deployment id, only used when api_base points to azure",
-        default=None,
-    )
-    parser.add_argument(
-        "--proxy",
-        nargs="?",
-        dest="proxy",
-        default=None,
-        help="http proxy url like http://localhost:8080",
-    )
-
     options = parser.parse_args()
     print("Arg parse done.")
 
-    # use openai key to prompt pro
-    openai_api_key = options.openai_api_key or os.getenv("OPENAI_API_KEY")
-    openai_model = options.openai_model
-    proxy = options.proxy
-    api_base = options.api_base
-    deployment_id = options.deployment_id
-    print(options.openai_api_key)
+    # Read config
+    config = dict()
+    if options.CONFIG_FILE:
+        with open(options.CONFIG_FILE) as f:
+            config: dict = toml.load(f)
+        print("Config parse done.")
+
+    # Setup openai
+    openai_conf: dict = config.get("openai")
+    if openai_conf:
+        if openai_conf.get("api_key"):
+            openai.api_key = openai_conf.get("api_key")
+        if openai_conf.get("api_base"):
+            openai.api_base = openai_conf.get("api_base")
+        if openai_conf.get("api_type"):
+            openai.api_type = openai_conf.get("api_type")
+        if openai_conf.get("proxy"):
+            openai.proxy = openai_conf.get("proxy")
+        print("OpenAI init done.")
 
     # Init bot
     bot = TeleBot(options.tg_token)
@@ -70,7 +54,12 @@ def main():
         commands=[
             BotCommand("prompt", "prompt of dalle-3"),
             BotCommand("quota", "cookie left quota"),
-        ],
+        ]
+        + (
+            [BotCommand("prompt_pro", "prompt with GPT enhanced")]
+            if openai_conf
+            else []
+        ),
     )
     print("Bot init done.")
 
@@ -115,32 +104,20 @@ def main():
     @bot.message_handler(regexp="^prompt_pro:")
     def prompt_pro_handler(message: Message) -> None:
         s = extract_prompt(message, bot_name)
-        if openai_api_key:
-            openai.api_key = openai_api_key
-            # if we have key we use openai to pro this prompt
-            if api_base:
-                openai.api_base = api_base
-                # if api_base ends with openai.azure.com, then set api_type to azure
-                if api_base.endswith(("openai.azure.com/", "openai.azure.com")):
-                    openai.api_type = "azure"
-                    openai.api_version = "2023-03-15-preview"
-                    default_options = {
-                        "engine": deployment_id,
-                    }
-            if proxy:
-                openai.proxy = proxy
-            try:
-                s = pro_prompt_by_openai(s, openai_model)
-                respond_pro_prompt(bot, message, s)
-            except Exception as e:
-                respond_pro_prompt(
-                    bot,
-                    message,
-                    "Something is wrong with your openai things please check cli",
-                )
-                print(str(e))
         if not s:
             return
+        if not openai_conf:
+            bot.reply_to(message, "OpenAI config not found.")
+            prompt_handler(message)
+            return
+
+        try:
+            s = pro_prompt_by_openai(s, openai_conf)
+            bot.reply_to(message, f"Rewrite by GPT: {s}")
+        except Exception as e:
+            bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
+            print(str(e))
+
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
 

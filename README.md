@@ -9,7 +9,7 @@ Live Show: https://t.me/c/1941649644/2798
 In any chat with the bot, send your message like `prompt: something` or `/prompt something` or `@bot_name something`.
 You can also send your message like `/quota` or `quota?` or `@bot_name quota?` to get the limit.
 
-You can also pro the prompt use your openai key, with --openai_api_key ${openai_api_key} to pro the prompt, using this method, you can send `prompt_pro: something`
+Using `/prompt_pro` or `prompt_pro:` will make use of GPT to rewrite your prompt.
 
 ## How to
 
@@ -19,7 +19,7 @@ How to make your own DALL-E 3 bing tg bot.
 
 **Read this first if you are new to code**
 
-1. Make sure your ip can open https://bing.com/create not jump cn.bing (can use GitHub to login）
+1. Make sure your ip can open https://bing.com/create not jump cn.bing (can use GitHub to login)
 2. Use https://bing.com/images/create create a new png, F12 in chrome to get cookie string as bing_cookie
 
    **_Highly recommanded to use Edge or Chrome to get the cookie, and don't use incognito/privacy mode. We encountered errors when using cookie got by Firefox._**
@@ -33,16 +33,15 @@ How to make your own DALL-E 3 bing tg bot.
 _You can provide multiple cookies, to increase the use limit. see:_
 
 ```
-usage: tg.py [-h] tg_token bing_cookie [bing_cookie ...]
+usage: tg.py [-h] [-c CONFIG_FILE] tg_token bing_cookie [bing_cookie ...]
 
 positional arguments:
-  tg_token     tg token
-  bing_cookie  bing cookie
-  --openai_api_key openai key
+  tg_token        tg token
+  bing_cookie     bing cookie
 
 options:
-  -h, --help   show this help message and exit
-
+  -h, --help      show this help message and exit
+  -c CONFIG_FILE  additional config file
 ```
 
 ### Method 2 (Run from a shell script)
@@ -66,6 +65,15 @@ If you want to use multiple cookies, you could save to `credentials/.cookies` wi
 `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' --network host --volume ./credentials/:/credentials tg_bing_dalle`
 
 You could also save your tg token to `credentials/.token` to instead of passing it via environment variables.
+
+## GPT Enhance
+
+To enable `prompt_pro`, copy `config.sample.toml` to `config.toml`, and edit the file to setup your OpenAI API.
+
+Then add the option `-c config.toml` to start the server.
+```python
+python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
+```
 
 ## Contribution
 

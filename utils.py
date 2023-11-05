@@ -21,7 +21,7 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
             return None
         s = msg_text[len(bot_name) + 2 :]
     else:
-        start_words = ["prompt:", "/prompt", "prompt_pro:", "/prompt_pro:"]
+        start_words = ["prompt:", "/prompt", "prompt_pro:", "/prompt_pro"]
         prefix = next((w for w in start_words if msg_text.startswith(w)), None)
         if not prefix:
             return None
@@ -34,11 +34,11 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
     return s
 
 
-def pro_prompt_by_openai(prompt, model="gpt-3.5-turbo"):
+def pro_prompt_by_openai(prompt: str, openai_conf: dict) -> str:
     prompt = f"revise `{prompt}` to a DALL-E prompt"
+    args = openai_conf.get("args", dict())
     completion = openai.ChatCompletion.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"role": "user", "content": prompt}], **args
     )
     res = completion["choices"][0].get("message").get("content").encode("utf8").decode()
     return res

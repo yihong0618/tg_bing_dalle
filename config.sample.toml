@@ -1,0 +1,23 @@
+# Uncomment to enable GPT rewrite
+[openai]
+
+# Set up your OpenAI API key, otherwise it will be read from the OPENAI_API_KEY environment variable
+# api_key = ""
+
+# Set up your OpenAI API base, otherwise it will be read from the OPENAI_API_BASE environment variable or default to https://api.openai.com/v1
+# api_base = "https://api.openai.com/v1"
+
+# Set to "azure" to use the Azure API, otherwise it will use the default OpenAI API
+# api_type = "open_ai"
+
+# Set http proxy url like http://localhost:8080 to connect to the API through a proxy
+# proxy = ""
+
+# Uncomment to add additional arguments to the OpenAI API call
+[openai.args]
+
+# OpenAI model to use
+model = "gpt-3.5-turbo"
+
+# Specify deployment id, only used when api_type points to azure
+# deployment_id = ""

@@ -166,3 +166,4 @@ start.sh
 .token
 .cookies
 credentials/
+config.toml
