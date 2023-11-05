@@ -9,6 +9,8 @@ Live Show: https://t.me/c/1941649644/2798
 In any chat with the bot, send your message like `prompt: something` or `/prompt something` or `@bot_name something`.
 You can also send your message like `/quota` or `quota?` or `@bot_name quota?` to get the limit.
 
+You can also pro the prompt use your openai key, with --openai_api_key ${openai_api_key} to pro the prompt, using this method, you can send `prompt_pro: something`
+
 ## How to
 
 How to make your own DALL-E 3 bing tg bot.
@@ -36,6 +38,7 @@ usage: tg.py [-h] tg_token bing_cookie [bing_cookie ...]
 positional arguments:
   tg_token     tg token
   bing_cookie  bing cookie
+  --openai_api_key openai key
 
 options:
   -h, --help   show this help message and exit

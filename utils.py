@@ -1,6 +1,7 @@
 import os
 from typing import List, Optional, Tuple
 
+import openai
 from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
 
@@ -20,7 +21,7 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
             return None
         s = msg_text[len(bot_name) + 2 :]
     else:
-        start_words = ["prompt:", "/prompt"]
+        start_words = ["prompt:", "/prompt", "prompt_pro:", "/prompt_pro:"]
         prefix = next((w for w in start_words if msg_text.startswith(w)), None)
         if not prefix:
             return None
@@ -31,6 +32,16 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
                 return None
         s = " ".join(s.split(" ")[1:])
     return s
+
+
+def pro_prompt_by_openai(prompt, model="gpt-3.5-turbo"):
+    prompt = f"revise `{prompt}` to a DALL-E prompt"
+    completion = openai.ChatCompletion.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    res = completion["choices"][0].get("message").get("content").encode("utf8").decode()
+    return res
 
 
 def get_quota(bing_image_obj_list: List[ImageGen]) -> List[Tuple[int, int]]:
