@@ -2,7 +2,7 @@
 
 # Load args from files if exist, otherwise env vars
 if [ -f "/credentials/.token" ]; then
-	tg_token=$(cat /credentials/.token)
+  tg_token=$(cat /credentials/.token)
 fi
 
 if [ -f "/credentials/.cookies" ]; then
