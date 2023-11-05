@@ -163,3 +163,6 @@ nohup.out
 
 
 start.sh
+.token
+.cookies
+credentials/

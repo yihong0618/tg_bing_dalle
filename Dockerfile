@@ -3,9 +3,14 @@ RUN apk add --no-cache git
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && rm -rf /root/.cache
-COPY tg.py .
+COPY *.py .
 
-ENV tg_token=$tg_token
-ENV bing_cookie=$bing_cookie
+# Entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x /app/entrypoint.sh
 
-CMD python3 tg.py $tg_token $bing_cookie
+# Default env vars
+ENV tg_token=${tg_token:-}
+ENV bing_cookie=${bing_cookie:-}
+
+ENTRYPOINT ["/app/entrypoint.sh"]
