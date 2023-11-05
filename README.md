@@ -58,9 +58,15 @@ Or you can use docker to run it:
 1. `docker build -t tg_bing_dalle .`
 2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
 
+If you want to use multiple cookies, you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
+
+`docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' --network host --volume ./credentials/:/credentials tg_bing_dalle`
+
+You could also save your tg token to `credentials/.token` to instead of passing it via environment variables.
+
 ## Contribution
 
-- Any issues PR welcome.
+- Any issue reports or PRs are welcome.
 - Any other bot type like slack/discord welcome
 - Before PR, use `pip install -U black` then `black .` first
 
