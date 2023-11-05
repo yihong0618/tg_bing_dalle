@@ -97,6 +97,10 @@ Please note that this may decrease the efficiency of the bot since it will have 
 5. `flyctl secrets set bing_cookie=`_your bing_cookie_
 6. `flyctl deploy`
 
+If you want to use multiple cookies, you just need to set the key of secrets to start with `bing_cookie`. For example:
+
+`flyctl secrets set bing_cookie_1=`_your bing_cookie_1_  
+
 ## Appreciation
 
 - Thank you, that's enough. Just enjoy it.
