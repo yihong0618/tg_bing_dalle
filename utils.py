@@ -6,14 +6,14 @@ from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
 
 
-def is_quota(message: Message, bot_name: str) -> bool:
+def has_quota(message: Message, bot_name: str) -> bool:
     """
-    This function is to check if it is quota
+    Check whether the message has a quota.
 
     a quota: @bot_name quota? or quota? or /quota or /quota@bot
 
     Returns:
-      bool: If it is not a quota, return False. Otherwise, return True.
+      bool: If it has a quota, return True. Otherwise, return False.
     """
     msg_text: str = message.text.strip()
     # @bot_name quota?
