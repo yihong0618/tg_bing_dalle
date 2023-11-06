@@ -60,33 +60,13 @@ Or you can use docker to run it:
 1. `docker build -t tg_bing_dalle .`
 2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
 
-If you want to use multiple cookies, you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
+If you want to use multiple cookies, you can set environment variables started with `bing_cookie`, (e.g. `bing_cookie_0`, `bing_cookie_1`, ...)
+
+Or you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
 
 `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' --network host --volume ./credentials/:/credentials tg_bing_dalle`
 
-You could also save your tg token to `credentials/.token` to instead of passing it via environment variables.
-
-## GPT Enhance
-
-To enable `prompt_pro`, copy `config.sample.toml` to `config.toml`, and edit the file to setup your OpenAI API.
-
-Then add the option `-c config.toml` to start the server.
-```python
-python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
-```
-
-## @bot
-
-To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
-Please note that this may decrease the efficiency of the bot since it will have to process all messages in the group, potentially overloading the server running it.
-
-## Contribution
-
-- Any issue reports or PRs are welcome.
-- Any other bot type like slack/discord welcome
-- Before PR, use `pip install -U black` then `black .` first
-
-## Deploy to Fly.io
+### Method 4 (Deploy to Fly.io)
 
 1. Install [flyctl](https://fly.io/docs/getting-started/installing-flyctl/)
 2. `flyctl auth login`
@@ -99,7 +79,29 @@ Please note that this may decrease the efficiency of the bot since it will have 
 
 If you want to use multiple cookies, you just need to set the key of secrets to start with `bing_cookie`. For example:
 
-`flyctl secrets set bing_cookie_1=`_your bing_cookie_1_  
+`flyctl secrets set bing_cookie_0=`_your bing_cookie_0_  
+
+## Advanced
+
+### GPT Enhance
+
+To enable `prompt_pro`, copy `config.sample.toml` to `config.toml`, and edit the file to setup your OpenAI API.
+
+Then add the option `-c config.toml` to start the server.
+```python
+python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
+```
+
+### @bot
+
+To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
+Please note that this may decrease the efficiency of the bot since it will have to process all messages in the group, potentially overloading the server running it.
+
+## Contribution
+
+- Any issue reports or PRs are welcome.
+- Any other bot type like slack/discord welcome
+- Before PR, use `pip install -U black` then `black .` first
 
 ## Appreciation
 
