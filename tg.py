@@ -9,7 +9,7 @@ from telebot import TeleBot  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
 from responder import respond_prompt, respond_quota
-from utils import extract_prompt, pro_prompt_by_openai
+from utils import extract_prompt, pro_prompt_by_openai, has_quota
 
 
 def main():
@@ -82,10 +82,11 @@ def main():
 
     # Handlers
     @bot.message_handler(commands=["quota"])
-    @bot.message_handler(regexp="^quota?")
+    @bot.message_handler(regexp="^quota\?")
     def quota_handler(message: Message) -> None:
-        print(f"{message.from_user.id} asks quota...")
-        respond_quota(bot, message, bing_image_obj_list)
+        if has_quota(message, bot_name):
+            print(f"{message.from_user.id} asks quota...")
+            respond_quota(bot, message, bing_image_obj_list)
 
     @bot.message_handler(commands=["prompt"])
     @bot.message_handler(regexp="^prompt:")
