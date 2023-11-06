@@ -60,9 +60,7 @@ Or you can use docker to run it:
 1. `docker build -t tg_bing_dalle .`
 2. `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' --network host tg_bing_dalle`
 
-If you want to use multiple cookies, you can set environment variables started with `bing_cookie`, (e.g. `bing_cookie_0`, `bing_cookie_1`, ...)
-
-Or you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
+If you want to use multiple cookies, you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
 
 `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' --network host --volume ./credentials/:/credentials tg_bing_dalle`
 
