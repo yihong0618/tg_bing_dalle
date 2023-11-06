@@ -82,7 +82,7 @@ def main():
 
     # Handlers
     @bot.message_handler(commands=["quota"])
-    @bot.message_handler(regexp="^quota?")
+    @bot.message_handler(regexp="^quota\?")
     def quota_handler(message: Message) -> None:
         print(f"{message.from_user.id} asks quota...")
         respond_quota(bot, message, bing_image_obj_list)
