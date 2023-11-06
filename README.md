@@ -24,7 +24,8 @@ How to make your own DALL-E 3 bing tg bot.
 
    **_Highly recommanded to use Edge or Chrome to get the cookie, and don't use incognito/privacy mode. We encountered errors when using cookie got by Firefox._**
 
-   ![get cookies](./how_to_get_the_cookies.png)
+  ![image](https://github.com/yihong0618/tg_bing_dalle/assets/15976103/103976c6-39b1-433c-b05f-b04174b4f89d)
+
 
 3. Get tg token, ask Google or ChatGPT, need get it from [BotFather](https://t.me/BotFather)
 4. `pip install -r requirements.txt`
