@@ -17,6 +17,9 @@ How to make your own DALL-E 3 bing tg bot.
 
 ### Method 1 (Run Python directly)
 
+> [!IMPORTANT]
+> This project requires [openai-python](https://github.com/openai/openai-python) which does not install on the required Python 3.12 due to a compatibility [issue](https://github.com/openai/openai-python/issues/645).
+
 **Read this first if you are new to code**
 
 1. Make sure your ip can open https://bing.com/create not jump cn.bing (can use GitHub to login)
@@ -64,6 +67,8 @@ Or you can use docker to run it:
 If you want to use multiple cookies, you could save to `credentials/.cookies` with one cookie per line. Then use this command to run it:
 
 `docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' --network host --volume ./credentials/:/credentials tg_bing_dalle`
+
+You could also save your tg token to `credentials/.token` to instead of passing it via environment variables.
 
 ### Method 4 (Deploy to Fly.io)
 
