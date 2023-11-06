@@ -1,5 +1,7 @@
+import time
 from threading import Thread
 from typing import Iterator, List
+
 
 from BingImageCreator import ImageGen  # type: ignore
 from telebot import TeleBot  # type: ignore
@@ -17,10 +19,18 @@ def respond_quota(
             for index, quota in get_quota(bing_image_obj_list)
         ]
     )
-    bot.reply_to(
+    message: Message = bot.reply_to(
         msg,
         f"Quota stats: \nWe have {len(bing_image_obj_list)} cookies\n{quota_string}",
     )
+    # delete it
+    time.sleep(3)
+    try:
+        bot.delete_message(msg.chat.id, message.message_id)
+        bot.delete_message(msg.chat.id, msg.message_id)
+    except Exception as e:
+        # just pass the it when error
+        print(str(e))
 
 
 def respond_prompt(
@@ -38,17 +48,22 @@ def respond_prompt(
         if limit > 1:
             within_limit = True
             break
+    info_message_id: Union[int, None] = None
     if not within_limit:
-        bot.reply_to(
+        # info message
+        message: Message = bot.reply_to(
             message,
             "No cookie is with limit left, will wait a long time and maybe fail",
         )
+        info_message_id: int = message.message_id
         # No return here, because we can still use the cookie with no limit left.
     else:
-        bot.reply_to(
+        # info message
+        message: Message = bot.reply_to(
             message,
             f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
         )
+        info_message_id: int = message.message_id
 
     # Generate the images
     try:
@@ -74,5 +89,12 @@ def respond_prompt(
             reply_to_message_id=message.message_id,
             disable_notification=True,
         )
+        # then delete the info message
+        try:
+            bot.delete_message(message.chat.id, info_message_id)
+        except Exception as e:
+            # just pass the it when error
+            print(str(e))
+            pass
     else:
         bot.reply_to(message, "Generate images error")
