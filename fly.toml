@@ -11,5 +11,4 @@ primary_region = "nrt"
   ignorefile = ".dockerignore"
 
 [env]
-TZ="Asia/Shanghai"
-
+  TZ="Asia/Shanghai"
