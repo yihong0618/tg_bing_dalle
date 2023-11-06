@@ -2,8 +2,11 @@
 
 echo "Checking prerequisites..."
 
+python_bin="./venv/bin/python"
+
 # Check if using pyenv
 if [[ "$PYENV_VIRTUAL_ENV" ]]; then
+  python_bin="python"
   echo "Currently, you are in a virtual environment managed by pyenv..."
   echo "It is assumed that you have already installed the requirements."
   echo "If not, please execute: python -m pip install -r requirements.txt"
@@ -45,6 +48,6 @@ done < <(grep . .cookies)
 bing_cookies="${bing_cookies% }"
 
 # Building and running
-python_cmd="./venv/bin/python tg.py '$tg_token' $bing_cookies"
+python_cmd="${python_bin} tg.py '$tg_token' $bing_cookies"
 echo "Ready to run..."
 eval $python_cmd
