@@ -6,6 +6,36 @@ from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
 
 
+def is_quota(message: Message, bot_name: str) -> bool:
+    """
+    This function is to check if it is quota
+
+    a quota: @bot_name quota? or quota? or /quota or /quota@bot
+
+    Returns:
+      bool: If it is not a quota, return False. Otherwise, return True.
+    """
+    msg_text: str = message.text.strip()
+    # @bot_name quota?
+    if msg_text.startswith("@"):
+        if not msg_text.startswith(f"@{bot_name} "):
+            return False
+        msg_text = msg_text[len(bot_name) + 2 :]
+
+    start_words = ["quota?", "/quota"]
+    prefix = next((w for w in start_words if msg_text.startswith(w)), None)
+    if not prefix:
+        return False
+
+    s = msg_text[len(prefix) :]
+    # /quota@bot
+    if s.startswith("@"):
+        if s != f"@{bot_name}":
+            return False
+
+    return True
+
+
 def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
     """
     This function filters messages for prompts.
