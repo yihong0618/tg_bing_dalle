@@ -18,7 +18,7 @@ How to make your own DALL-E 3 bing tg bot.
 ### Method 1 (Run Python directly)
 
 > [!IMPORTANT]
-> This project requires [openai-python](https://github.com/openai/openai-python) which does not install on the required Python 3.12 due to a compatibility [issue](https://github.com/openai/openai-python/issues/645).
+> This project requires [openai-python](https://github.com/openai/openai-python) which does not install on Python 3.12 due to a compatibility [issue](https://github.com/openai/openai-python/issues/645).
 
 **Read this first if you are new to code**
 
