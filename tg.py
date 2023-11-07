@@ -9,7 +9,12 @@ from telebot import TeleBot  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
 from responder import respond_prompt, respond_quota
-from utils import extract_prompt, pro_prompt_by_openai, has_quota
+from utils import (
+    extract_prompt,
+    pro_prompt_by_openai,
+    pro_prompt_by_openai_vision,
+    has_quota,
+)
 
 
 def main():
@@ -98,6 +103,26 @@ def main():
         if s == "quota?":
             quota_handler(message)
             return
+        print(f"{message.from_user.id} send prompt: {s}")
+        respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
+
+    @bot.message_handler(content_types=["photo"])
+    def prompt_photo_handler(message: Message) -> None:
+        s = message.caption
+        if not s.startswith("prompt:"):
+            return
+        if not openai_conf:
+            bot.reply_to(message, "OpenAI config not found.")
+            prompt_handler(message)
+            return
+        file_path = bot.get_file(message.photo[0].file_id).file_path
+        url = "https://api.telegram.org/file/bot{0}/{1}".format(bot.token, file_path)
+        try:
+            s = pro_prompt_by_openai_vision(s, openai_conf, url)
+            bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
+        except Exception as e:
+            bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
+            print(str(e))
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
 
