@@ -1,9 +1,11 @@
 import os
 from typing import List, Optional, Tuple
 
-import openai
+from openai import OpenAI
 from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
+
+client = OpenAI()
 
 
 def has_quota(message: Message, bot_name: str) -> bool:
@@ -67,10 +69,30 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
 def pro_prompt_by_openai(prompt: str, openai_conf: dict) -> str:
     prompt = f"revise `{prompt}` to a DALL-E prompt"
     args = openai_conf.get("args", dict())
-    completion = openai.ChatCompletion.create(
+    completion = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}], **args
     )
-    res = completion["choices"][0].get("message").get("content").encode("utf8").decode()
+    res = completion.choices[0].message.content.encode("utf8").decode()
+    return res
+
+
+def pro_prompt_by_openai_vision(prompt: str, openai_conf: dict, url: str) -> str:
+    completion = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "what is in this image."},
+                    {"type": "image_url", "image_url": url},
+                ],
+            }
+        ],
+        max_tokens=300,
+    )
+    res = completion.choices[0].message.content.encode("utf8").decode()
+    prompt = f"{prompt} {res}"
+    res = pro_prompt_by_openai(prompt, openai_conf)
     return res
 
 
