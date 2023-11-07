@@ -17,7 +17,7 @@ else
   bing_cookies=""
   while IFS='=' read -r key value
   do
-    if [[ $key == bing_cookie* ]]; then
+    if [[ $key == bing_cookie* && -n "$value" ]]; then
       bing_cookies="$bing_cookies'${value}' "
     fi
   done < <(env)
@@ -25,5 +25,6 @@ else
 fi
 
 # Exec main process
-python_cmd="python3 tg.py '$tg_token' $bing_cookies"
+# -u: disable buffering to see the output in real-time
+python_cmd="python3 -u tg.py '$tg_token' $bing_cookies"
 eval $python_cmd
