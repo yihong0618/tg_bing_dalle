@@ -5,7 +5,7 @@
 !*.py
 !requirements.txt
 !entrypoint.sh
-!config.toml
+!*.toml
 
 # 3. Bonus step: ignore any unnecessary files that may be inside those allowed directories in 2
 **/*~

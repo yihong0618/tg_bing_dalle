@@ -27,4 +27,7 @@ fi
 # Exec main process
 # -u: disable buffering to see the output in real-time
 python_cmd="python3 -u tg.py '$tg_token' $bing_cookies"
+if [ -n "$config_file" ]; then
+  python_cmd="$python_cmd -c '$config_file'"
+fi
 eval $python_cmd
