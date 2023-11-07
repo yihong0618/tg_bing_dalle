@@ -5,8 +5,6 @@ from openai import OpenAI
 from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
 
-client = OpenAI()
-
 
 def has_quota(message: Message, bot_name: str) -> bool:
     """
@@ -66,7 +64,7 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
     return s
 
 
-def pro_prompt_by_openai(prompt: str, openai_conf: dict) -> str:
+def pro_prompt_by_openai(prompt: str, openai_conf: dict, client: OpenAI) -> str:
     prompt = f"revise `{prompt}` to a DALL-E prompt"
     args = openai_conf.get("args", dict())
     completion = client.chat.completions.create(
@@ -76,7 +74,9 @@ def pro_prompt_by_openai(prompt: str, openai_conf: dict) -> str:
     return res
 
 
-def pro_prompt_by_openai_vision(prompt: str, openai_conf: dict, url: str) -> str:
+def pro_prompt_by_openai_vision(
+    prompt: str, openai_conf: dict, url: str, client: OpenAI
+) -> str:
     completion = client.chat.completions.create(
         model="gpt-4-vision-preview",
         messages=[
