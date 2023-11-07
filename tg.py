@@ -3,6 +3,7 @@ import os
 from itertools import cycle
 
 import openai
+from openai import OpenAI
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
 from telebot import TeleBot  # type: ignore
@@ -40,6 +41,7 @@ def main():
 
     # Setup openai
     openai_conf: dict = config.get("openai")
+    client = None
     if openai_conf:
         if openai_conf.get("api_key"):
             openai.api_key = openai_conf.get("api_key")
@@ -50,6 +52,7 @@ def main():
         if openai_conf.get("proxy"):
             openai.proxy = openai_conf.get("proxy")
         print("OpenAI init done.")
+        client = OpenAI()
 
     # Init bot
     bot = TeleBot(options.tg_token)
@@ -118,7 +121,7 @@ def main():
         file_path = bot.get_file(message.photo[0].file_id).file_path
         url = "https://api.telegram.org/file/bot{0}/{1}".format(bot.token, file_path)
         try:
-            s = pro_prompt_by_openai_vision(s, openai_conf, url)
+            s = pro_prompt_by_openai_vision(s, openai_conf, url, client)
             bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
@@ -138,7 +141,7 @@ def main():
             return
 
         try:
-            s = pro_prompt_by_openai(s, openai_conf)
+            s = pro_prompt_by_openai(s, openai_conf, client)
             bot.reply_to(message, f"Rewrite by GPT: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
