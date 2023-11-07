@@ -96,6 +96,17 @@ Then add the option `-c config.toml` to start the server.
 python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
 ```
 
+If you are running it using [Method 3 (Run from Docker)](#method-3-run-from-docker), you need to rebuild the image and add the option `-e config_file='config.toml'` to start it.
+```
+docker run -d --name tg_bing_dalle -e tg_token='${tg_token}' -e bing_cookie='${bing_cookie}' \
+-e config_file='config.toml' --network host tg_bing_dalle
+```
+
+If you are running it using [Method 4 (Deploy to Fly.io)](#method-4-deploy-to-flyio), you need to add the option `-e config_file='config.toml'` to deploy.
+```
+flyctl deploy -e config_file='config.toml'
+```
+
 ### @bot
 
 To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
