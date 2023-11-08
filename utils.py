@@ -92,7 +92,7 @@ def pro_prompt_by_openai_vision(
     )
     res = completion.choices[0].message.content.encode("utf8").decode()
     prompt = f"{prompt} {res}"
-    res = pro_prompt_by_openai(prompt, openai_conf)
+    res = pro_prompt_by_openai(prompt, openai_conf, client)
     return res
 
 
