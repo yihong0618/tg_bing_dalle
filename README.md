@@ -101,6 +101,10 @@ python tg.py '${tg_token}' '${bing_cookie}' -c config.toml
 To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
 Please note that this may decrease the efficiency of the bot since it will have to process all messages in the group, potentially overloading the server running it.
 
+## Recommend
+
+- lark version [lark-dalle3-bot](https://github.com/mrchi/lark-dalle3-bot)
+
 ## Contribution
 
 - Any issue reports or PRs are welcome.
