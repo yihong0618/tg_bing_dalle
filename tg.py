@@ -2,8 +2,7 @@ import argparse
 import os
 from itertools import cycle
 
-import openai
-from openai import OpenAI
+from openai import OpenAI, AzureOpenAI
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
 from telebot import TeleBot  # type: ignore
@@ -40,19 +39,19 @@ def main():
         print("Config parse done.")
 
     # Setup openai
+    openai_client = None
+
     openai_conf: dict = config.get("openai")
-    client = None
     if openai_conf:
-        if openai_conf.get("api_key"):
-            openai.api_key = openai_conf.get("api_key")
-        if openai_conf.get("api_base"):
-            openai.api_base = openai_conf.get("api_base")
-        if openai_conf.get("api_type"):
-            openai.api_type = openai_conf.get("api_type")
-        if openai_conf.get("proxy"):
-            openai.proxy = openai_conf.get("proxy")
+        openai_client = OpenAI(**openai_conf)
         print("OpenAI init done.")
-        client = OpenAI()
+    
+    azure_openai_conf: dict = config.get("azure_openai")
+    if azure_openai_conf:
+        openai_client = AzureOpenAI(**azure_openai_conf)
+        print("Azure OpenAI init done.")
+    
+    openai_args = config.get("openai_args", dict())
 
     # Init bot
     bot = TeleBot(options.tg_token)
@@ -121,7 +120,7 @@ def main():
         file_path = bot.get_file(message.photo[0].file_id).file_path
         url = "https://api.telegram.org/file/bot{0}/{1}".format(bot.token, file_path)
         try:
-            s = pro_prompt_by_openai_vision(s, openai_conf, url, client)
+            s = pro_prompt_by_openai_vision(s, openai_args, url, openai_client)
             bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
@@ -135,13 +134,13 @@ def main():
         s = extract_prompt(message, bot_name)
         if not s:
             return
-        if not openai_conf:
+        if not openai_client:
             bot.reply_to(message, "OpenAI config not found.")
             prompt_handler(message)
             return
 
         try:
-            s = pro_prompt_by_openai(s, openai_conf, client)
+            s = pro_prompt_by_openai(s, openai_args, openai_client)
             bot.reply_to(message, f"Rewrite by GPT: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")

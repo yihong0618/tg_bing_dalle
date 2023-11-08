@@ -1,23 +1,28 @@
-# Uncomment to enable GPT rewrite
+# Uncomment to enable GPT rewrite by OpenAI (exclude Azure)
 [openai]
+# Find the params of openai.OpenAI(...) from https://github.com/openai/openai-python
 
 # Set up your OpenAI API key, otherwise it will be read from the OPENAI_API_KEY environment variable
 # api_key = ""
 
 # Set up your OpenAI API base, otherwise it will be read from the OPENAI_API_BASE environment variable or default to https://api.openai.com/v1
-# api_base = "https://api.openai.com/v1"
+# base_url = "https://api.openai.com/v1"
 
-# Set to "azure" to use the Azure API, otherwise it will use the default OpenAI API
-# api_type = "open_ai"
+#=====================================
+# Uncomment to enable GPT rewrite by Azure OpenAI
+# [azure_opeai]
+# Find the params of openai.AzureOpenAI(...) from https://github.com/openai/openai-python
 
-# Set http proxy url like http://localhost:8080 to connect to the API through a proxy
-# proxy = ""
+# Set Azure OpenAI endpoint
+# azure_endpoint = ""
 
+# Set up your Azure deployment id
+# azure_deployment = ""
+
+#=====================================
 # Uncomment to add additional arguments to the OpenAI API call
-[openai.args]
+[openai_args]
+# Find the params of openai.OpenAI.chat.completions.create(...) from https://github.com/openai/openai-python
 
 # OpenAI model to use
 model = "gpt-3.5-turbo"
-
-# Specify deployment id, only used when api_type points to azure
-# deployment_id = ""

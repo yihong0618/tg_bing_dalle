@@ -64,18 +64,17 @@ def extract_prompt(message: Message, bot_name: str) -> Optional[str]:
     return s
 
 
-def pro_prompt_by_openai(prompt: str, openai_conf: dict, client: OpenAI) -> str:
+def pro_prompt_by_openai(prompt: str, openai_args: dict, client: OpenAI) -> str:
     prompt = f"revise `{prompt}` to a DALL-E prompt"
-    args = openai_conf.get("args", dict())
     completion = client.chat.completions.create(
-        messages=[{"role": "user", "content": prompt}], **args
+        messages=[{"role": "user", "content": prompt}], **openai_args
     )
     res = completion.choices[0].message.content.encode("utf8").decode()
     return res
 
 
 def pro_prompt_by_openai_vision(
-    prompt: str, openai_conf: dict, url: str, client: OpenAI
+    prompt: str, openai_args: dict, url: str, client: OpenAI
 ) -> str:
     completion = client.chat.completions.create(
         model="gpt-4-vision-preview",
@@ -92,7 +91,7 @@ def pro_prompt_by_openai_vision(
     )
     res = completion.choices[0].message.content.encode("utf8").decode()
     prompt = f"{prompt} {res}"
-    res = pro_prompt_by_openai(prompt, openai_conf, client)
+    res = pro_prompt_by_openai(prompt, openai_args, client)
     return res
 
 
