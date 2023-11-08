@@ -45,12 +45,12 @@ def main():
     if openai_conf:
         openai_client = OpenAI(**openai_conf)
         print("OpenAI init done.")
-    
+
     azure_openai_conf: dict = config.get("azure_openai")
     if azure_openai_conf:
         openai_client = AzureOpenAI(**azure_openai_conf)
         print("Azure OpenAI init done.")
-    
+
     openai_args = config.get("openai_args", dict())
 
     # Init bot
