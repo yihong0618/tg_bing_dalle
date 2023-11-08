@@ -3,6 +3,23 @@
 echo "Checking prerequisites..."
 
 python_bin="./venv/bin/python"
+config_file=""
+
+# Function to show usage
+usage() {
+    echo "Usage: $0 [-c <config_file>]"
+    exit 1
+}
+
+# Parse command-line options
+while getopts ":c:" opt; do
+  case ${opt} in
+    c ) config_file=$OPTARG
+      ;;
+    \? ) usage
+      ;;
+  esac
+done
 
 # Check if using pyenv
 if [[ "$PYENV_VIRTUAL_ENV" ]]; then
@@ -49,5 +66,9 @@ bing_cookies="${bing_cookies% }"
 
 # Building and running
 python_cmd="${python_bin} tg.py '$tg_token' $bing_cookies"
+# Load configurations from config file if specified
+if [ -n "$config_file" ]; then
+  python_cmd="${python_cmd} -c '$config_file'"
+fi
 echo "Ready to run..."
 eval $python_cmd
