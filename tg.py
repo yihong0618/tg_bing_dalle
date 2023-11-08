@@ -113,7 +113,7 @@ def main():
         s = message.caption
         if not s.startswith("prompt:"):
             return
-        if not openai_conf:
+        if not openai_client:
             bot.reply_to(message, "OpenAI config not found.")
             prompt_handler(message)
             return
