@@ -41,8 +41,8 @@ def main():
     # Setup openai
     openai_client = None
 
-    openai_conf: dict = config.get("openai", {})
-    if openai_conf or os.environ.get("OPENAI_API_KEY"):
+    openai_conf: dict = config.get("openai")
+    if openai_conf:
         openai_client = OpenAI(**openai_conf)
         print("OpenAI init done.")
 
