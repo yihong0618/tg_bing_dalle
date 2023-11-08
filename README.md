@@ -55,7 +55,7 @@ Or you can start with `run.sh`:
 1. Save your tg token to a new `.token` file in this directory.
 2. Save your cookies to a new `.cookies` file in this directory, one cookie per line.
 3. `chmod +x run.sh`
-4. `./run.sh`
+4. `./run.sh` or `./run.sh -c <config_file>`
 
 ### Method 3 (Run from Docker)
 
