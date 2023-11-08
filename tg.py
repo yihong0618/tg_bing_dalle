@@ -42,12 +42,12 @@ def main():
     openai_client = None
 
     openai_conf: dict = config.get("openai")
-    if openai_conf:
+    if openai_conf is not None:
         openai_client = OpenAI(**openai_conf)
         print("OpenAI init done.")
 
     azure_openai_conf: dict = config.get("azure_openai")
-    if azure_openai_conf:
+    if azure_openai_conf is not None:
         openai_client = AzureOpenAI(**azure_openai_conf)
         print("Azure OpenAI init done.")
 
@@ -64,7 +64,7 @@ def main():
         ]
         + (
             [BotCommand("prompt_pro", "prompt with GPT enhanced")]
-            if openai_conf
+            if openai_client
             else []
         ),
     )
