@@ -21,7 +21,7 @@ def main():
     # Init args
     parser = argparse.ArgumentParser()
     parser.add_argument("tg_token", help="tg token")
-    parser.add_argument("bing_cookie", help="bing cookie", nargs="+")
+    parser.add_argument("bing_cookie", help="bing cookie", nargs="*")
     parser.add_argument(
         "-c",
         dest="CONFIG_FILE",
@@ -69,9 +69,12 @@ def main():
         ),
     )
     print("Bot init done.")
+    bing_cookies_list = options.bing_cookie
+    if os.path.exists(".cookies"):
+        with open(".cookies") as f:
+            bing_cookies_list = options.bing_cookie + list(f.readlines())
 
-    # Init BingImageCreator
-    bing_image_obj_list = [ImageGen(i) for i in options.bing_cookie]
+    bing_image_obj_list = [ImageGen(i) for i in bing_cookies_list]
     bing_cookie_cnt = len(bing_image_obj_list)
     for index, image_obj in enumerate(bing_image_obj_list):
         try:

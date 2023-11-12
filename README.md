@@ -33,6 +33,7 @@ How to make your own DALL-E 3 bing tg bot.
 3. Get tg token, ask Google or ChatGPT, need get it from [BotFather](https://t.me/BotFather)
 4. `pip install -r requirements.txt`
 5. `python tg.py '${tg_token}' '${bing_cookie}'`
+6.  you can also save your cookies to a new `.cookies` file in this directory, one cookie per line. then run  `python tg.py '${tg_token}'`
 
 _You can provide multiple cookies, to increase the use limit. see:_
 
