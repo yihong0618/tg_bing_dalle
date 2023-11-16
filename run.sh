@@ -53,7 +53,7 @@ echo "Loading .token..."
 tg_token=$(cat .token)
 
 # Building and running
-python_cmd="${python_bin} -u tg.py '$tg_token' $bing_cookies"
+python_cmd="${python_bin} -u tg.py '$tg_token'"
 # Load configurations from config file if specified
 if [ -n "$config_file" ]; then
   python_cmd="${python_cmd} -c '$config_file'"
