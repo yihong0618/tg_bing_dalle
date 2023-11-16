@@ -41,12 +41,12 @@ def main():
     # Setup openai
     openai_client = None
 
-    openai_conf: dict = config.get("openai")
+    openai_conf: dict | None = config.get("openai")
     if openai_conf is not None:
         openai_client = OpenAI(**openai_conf)
         print("OpenAI init done.")
 
-    azure_openai_conf: dict = config.get("azure_openai")
+    azure_openai_conf: dict | None = config.get("azure_openai")
     if azure_openai_conf is not None:
         openai_client = AzureOpenAI(**azure_openai_conf)
         print("Azure OpenAI init done.")
@@ -72,9 +72,9 @@ def main():
     bing_cookies_list = options.bing_cookie
     if os.path.exists(".cookies"):
         with open(".cookies") as f:
-            bing_cookies_list = options.bing_cookie + list(f.readlines())
+            bing_cookies_list += [line.strip() for line in f.readlines()]
 
-    bing_image_obj_list = [ImageGen(i) for i in bing_cookies_list]
+    bing_image_obj_list = [ImageGen(i) for i in set(bing_cookies_list)]
     bing_cookie_cnt = len(bing_image_obj_list)
     for index, image_obj in enumerate(bing_image_obj_list):
         try:

@@ -52,20 +52,8 @@ echo "Prerequisites look good!"
 echo "Loading .token..."
 tg_token=$(cat .token)
 
-# Load cookies from .cookies file and concat into string
-echo "Loading .cookies..."
-bing_cookies=""
-while read line; do
-  if [ -n "$line" ]; then
-    bing_cookies="$bing_cookies'${line}' "
-  fi
-done < <(grep . .cookies)
-
-# Remove trailing space
-bing_cookies="${bing_cookies% }"
-
 # Building and running
-python_cmd="${python_bin} tg.py '$tg_token' $bing_cookies"
+python_cmd="${python_bin} -u tg.py '$tg_token' $bing_cookies"
 # Load configurations from config file if specified
 if [ -n "$config_file" ]; then
   python_cmd="${python_cmd} -c '$config_file'"
