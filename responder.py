@@ -15,7 +15,7 @@ def respond_quota(
 ) -> None:
     quota_string = "\n".join(
         [
-            f"Cookie{index} left quota: {quota}."
+            f"Cookie{index} remaining quota: {quota}."
             for index, quota in get_quota(bing_image_obj_list)
         ]
     )
@@ -53,7 +53,7 @@ def respond_prompt(
         # info message
         message: Message = bot.reply_to(
             message,
-            "No cookie is with limit left, will wait a long time and maybe fail",
+            "There are no more cookies available, so we might have to wait for a while and there’s a chance of failure.",
         )
         info_message_id: int = message.message_id
         # No return here, because we can still use the cookie with no limit left.
@@ -61,7 +61,7 @@ def respond_prompt(
         # info message
         message: Message = bot.reply_to(
             message,
-            f"Using bing DALL-E 3 generating images please wait, left times we can use: {limit-1}",
+            f"Bing DALL-E 3 is currently generating images. Please wait. The remaining number of times we can use it is {limit-1}.",
         )
         info_message_id: int = message.message_id
 
@@ -72,7 +72,7 @@ def respond_prompt(
         print(str(e))
         bot.reply_to(
             message,
-            "Your prompt ban from Bing DALL-E 3, please change it and do not use the same prompt.",
+            "Bing DALL-E 3 has prohibited your given prompt. Please modify it.",
         )
         return
 
@@ -97,4 +97,4 @@ def respond_prompt(
             print(str(e))
             pass
     else:
-        bot.reply_to(message, "Generate images error")
+        bot.reply_to(message, "There is an error generating images.")
