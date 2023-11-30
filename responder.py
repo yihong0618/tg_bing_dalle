@@ -68,8 +68,6 @@ def respond_prompt(
     # Generate the images
     try:
         images: List[str] = image_obj.get_images(prompt)
-        # sometimes bing return another svg images
-        images = [i for i in images if not i.endswith(".svg")]
     except Exception as e:
         print(str(e))
         bot.reply_to(
