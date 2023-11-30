@@ -114,7 +114,7 @@ def main():
     @bot.message_handler(content_types=["photo"])
     def prompt_photo_handler(message: Message) -> None:
         s = message.caption
-        if not s.startswith("prompt:"):
+        if not s and not s.startswith("prompt:"):
             return
         if not openai_client:
             bot.reply_to(message, "OpenAI config not found.")
