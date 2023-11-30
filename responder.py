@@ -68,6 +68,8 @@ def respond_prompt(
     # Generate the images
     try:
         images: List[str] = image_obj.get_images(prompt)
+        # sometimes bing return another svg images
+        images = [i for i in images if not i.endswith(".svg")]
     except Exception as e:
         print(str(e))
         bot.reply_to(
@@ -83,12 +85,20 @@ def respond_prompt(
     # Send the images
     photos_list = [InputMediaPhoto(i) for i in images]
     if photos_list:
-        bot.send_media_group(
-            message.chat.id,
-            photos_list,
-            reply_to_message_id=message.message_id,
-            disable_notification=True,
-        )
+        try:
+            bot.send_media_group(
+                message.chat.id,
+                photos_list,
+                reply_to_message_id=message.message_id,
+                disable_notification=True,
+            )
+        except Exception as e:
+            print(str(e))
+            bot.reply_to(
+                message,
+                "Something is wrong sending the images to tg, please check the log",
+            )
+
         # then delete the info message
         try:
             bot.delete_message(message.chat.id, info_message_id)
