@@ -114,13 +114,14 @@ def main():
     @bot.message_handler(content_types=["photo"])
     def prompt_photo_handler(message: Message) -> None:
         s = message.caption
-        if not s and not s.startswith("prompt:"):
+        if not s or not s.startswith("prompt:"):
             return
         if not openai_client:
             bot.reply_to(message, "OpenAI config not found.")
             prompt_handler(message)
             return
-        file_path = bot.get_file(message.photo[0].file_id).file_path
+        max_size_photo = max(message.photo, key=lambda p: p.file_size)
+        file_path = bot.get_file(max_size_photo.file_id).file_path
         url = "https://api.telegram.org/file/bot{0}/{1}".format(bot.token, file_path)
         try:
             s = pro_prompt_by_openai_vision(s, openai_args, url, openai_client)
