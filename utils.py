@@ -1,6 +1,8 @@
 import os
+import base64
 from typing import List, Optional, Tuple
 
+import requests
 from openai import OpenAI
 from BingImageCreator import ImageGen  # type: ignore
 from telebot.types import Message  # type: ignore
@@ -73,23 +75,39 @@ def pro_prompt_by_openai(prompt: str, openai_args: dict, client: OpenAI) -> str:
     return res
 
 
-def pro_prompt_by_openai_vision(
-    prompt: str, openai_args: dict, url: str, client: OpenAI
-) -> str:
-    completion = client.chat.completions.create(
-        model="gpt-4-vision-preview",
-        messages=[
+def _image_to_data_uri(file_path):
+    with open(file_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+        return f"data:image/png;base64,{encoded_image}"
+
+
+def pro_prompt_by_openai_vision(prompt: str, openai_args: dict, client: OpenAI) -> str:
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {client.api_key}",
+    }
+
+    payload = {
+        "model": "gpt-4-vision-preview",
+        "messages": [
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "what is in this image."},
-                    {"type": "image_url", "image_url": url},
+                    {"type": "text", "text": "What’s in this image?"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": _image_to_data_uri("temp.jpg")},
+                    },
                 ],
             }
         ],
-        max_tokens=300,
-    )
-    res = completion.choices[0].message.content.encode("utf8").decode()
+        "max_tokens": 500,
+    }
+
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
+    ).json()
+    res = response["choices"][0]["message"]["content"].encode("utf8").decode()
     prompt = f"{prompt} {res}"
     res = pro_prompt_by_openai(prompt, openai_args, client)
     return res

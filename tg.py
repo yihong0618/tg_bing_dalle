@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 from itertools import cycle
 
 from openai import OpenAI, AzureOpenAI
@@ -122,9 +123,11 @@ def main():
             return
         max_size_photo = max(message.photo, key=lambda p: p.file_size)
         file_path = bot.get_file(max_size_photo.file_id).file_path
-        url = "https://api.telegram.org/file/bot{0}/{1}".format(bot.token, file_path)
+        downloaded_file = bot.download_file(file_path)
+        with open("temp.jpg", "wb") as temp_file:
+            temp_file.write(downloaded_file)
         try:
-            s = pro_prompt_by_openai_vision(s, openai_args, url, openai_client)
+            s = pro_prompt_by_openai_vision(s, openai_args, openai_client)
             bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
@@ -152,6 +155,21 @@ def main():
 
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
+
+    # this is for personal usage if you do not need it, please delete this function
+    @bot.message_handler(regexp="https?://x.com|https?://twitter\.com")
+    def replace_twitter_link(message: Message):
+        url_pattern = r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+        text = message.text.strip()
+        if text.find("fxtwitter") > 0:
+            return
+        links = re.findall(url_pattern, text)
+        for link in links:
+            modified_link = re.sub(r"\?.*", "", link)
+            text = text.replace(link, modified_link)
+            text = text.replace("twitter.com", "fxtwitter.com")
+            text = text.replace("x.com", "fxtwitter.com")
+        bot.reply_to(message, text)
 
     # Start bot
     print("Starting tg bing DALL-E 3 images bot.")

@@ -2,4 +2,4 @@ BingImageCreator-fork==0.7.3
 pyTelegramBotAPI==4.14.0
 toml>=0.10.2
 openai==1.1.1
-
+requests
