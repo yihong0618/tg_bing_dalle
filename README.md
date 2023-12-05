@@ -110,8 +110,12 @@ flyctl deploy -e config_file='config.toml'
 
 ### @bot
 
-To enable `@bot_name ${prompts}`. you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups). 
+To enable `@bot_name ${prompts}`, you can either disable [privacy mode](https://core.telegram.org/bots/features#privacy-mode) or add the bot as a Group Admin (not recommended for public groups).
 Please note that this may decrease the efficiency of the bot since it will have to process all messages in the group, potentially overloading the server running it.
+
+### Twitter Link Replacement
+
+This feature is designed for personal use. It automatically replaces links containing `x.com` or `twitter.com` with `fxtwitter.com`. This enables tweet previews in TG. To enable this feature, please add the `-x` option.
 
 ## Recommend
 
