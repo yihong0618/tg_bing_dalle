@@ -1,6 +1,5 @@
 import argparse
 import os
-import re
 from itertools import cycle
 
 from openai import OpenAI, AzureOpenAI
@@ -28,12 +27,6 @@ def main():
         dest="CONFIG_FILE",
         help="additional config file",
         default=None,
-    )
-    parser.add_argument(
-        "-x",
-        help="Enable twitter link replace",
-        action="store_true",
-        dest="TWITTER_REPLACEMENT",
     )
     options = parser.parse_args()
     print("Arg parse done.")
@@ -161,22 +154,6 @@ def main():
 
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
-
-    if options.TWITTER_REPLACEMENT:
-        # this is designed for personal use
-        @bot.message_handler(regexp="https?://x.com|https?://twitter\.com")
-        def replace_twitter_link(message: Message):
-            url_pattern = r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-            text = message.text.strip()
-            if text.find("fxtwitter") > 0:
-                return
-            links = re.findall(url_pattern, text)
-            for link in links:
-                modified_link = re.sub(r"\?.*", "", link)
-                text = text.replace(link, modified_link)
-                text = text.replace("twitter.com", "fxtwitter.com")
-                text = text.replace("x.com", "fxtwitter.com")
-            bot.reply_to(message, text)
 
     # Start bot
     print("Starting tg bing DALL-E 3 images bot.")

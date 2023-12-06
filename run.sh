@@ -12,11 +12,9 @@ usage() {
 }
 
 # Parse command-line options
-while getopts ":c:x" opt; do
+while getopts ":c" opt; do
   case ${opt} in
     c ) config_file=$OPTARG
-      ;;
-    x ) twitter_replacement="-x"
       ;;
     \? ) usage
       ;;
