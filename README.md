@@ -86,6 +86,10 @@ If you want to use multiple cookies, you just need to set the key of secrets to 
 
 `flyctl secrets set bing_cookie_0=`_your bing_cookie_0_  
 
+### Method 5 (Deploy to Zeabur)
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/W66UCB?utm_source=tg_bing_dalle)
+
 ## Advanced
 
 ### GPT Enhance
