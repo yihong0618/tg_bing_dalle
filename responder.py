@@ -51,19 +51,19 @@ def respond_prompt(
     info_message_id: Union[int, None] = None
     if not within_limit:
         # info message
-        message: Message = bot.reply_to(
+        reply_message: Message = bot.reply_to(
             message,
             "There are no more cookies available, so we might have to wait for a while and there’s a chance of failure.",
         )
-        info_message_id: int = message.message_id
+        info_message_id: int = reply_message.message_id
         # No return here, because we can still use the cookie with no limit left.
     else:
         # info message
-        message: Message = bot.reply_to(
+        reply_message: Message = bot.reply_to(
             message,
             f"Bing DALL-E 3 is currently generating images. Please wait. The remaining number of times we can use it is {limit-1}.",
         )
-        info_message_id: int = message.message_id
+        info_message_id: int = reply_message.message_id
 
     # Generate the images
     try:
@@ -99,7 +99,7 @@ def respond_prompt(
 
         # then delete the info message
         try:
-            bot.delete_message(message.chat.id, info_message_id)
+            bot.delete_message(reply_message.chat.id, info_message_id)
         except Exception as e:
             # just pass the it when error
             print(str(e))
