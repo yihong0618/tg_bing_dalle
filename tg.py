@@ -3,6 +3,7 @@ import os
 from itertools import cycle
 
 from openai import OpenAI, AzureOpenAI
+import google.generativeai as genai
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
 from telebot import TeleBot  # type: ignore
@@ -13,7 +14,10 @@ from utils import (
     extract_prompt,
     pro_prompt_by_openai,
     pro_prompt_by_openai_vision,
+    pro_prompt_by_gemini,
+    pro_prompt_by_gemini_vision,
     has_quota,
+    make_gemini_client,
 )
 
 
@@ -53,21 +57,27 @@ def main():
 
     openai_args = config.get("openai_args", dict())
 
+    # Setup Gemini
+    gemini_client = None
+    GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
+    if GOOGLE_GEMINI_KEY:
+        genai.configure(api_key=GOOGLE_GEMINI_KEY)
+        gemini_client = make_gemini_client()
+        print("Gemini init done.")
+
     # Init bot
     bot = TeleBot(options.tg_token)
     bot_name = bot.get_me().username
     bot.delete_my_commands(scope=None, language_code=None)
-    bot.set_my_commands(
-        commands=[
-            BotCommand("prompt", "prompt of dalle-3"),
-            BotCommand("quota", "cookie left quota"),
-        ]
-        + (
-            [BotCommand("prompt_pro", "prompt with GPT enhanced")]
-            if openai_client
-            else []
-        ),
-    )
+    commands = [
+        BotCommand("prompt", "prompt of dalle-3"),
+        BotCommand("quota", "cookie left quota"),
+    ]
+    if openai_client:
+        commands.append(BotCommand("prompt_pro", "prompt with GPT enhanced"))
+    if gemini_client:
+        commands.append(BotCommand("prompt_gem", "prompt with gemini enhanced"))
+    bot.set_my_commands(commands)
     print("Bot init done.")
     bing_cookies_list = options.bing_cookie
     if os.path.exists(".cookies"):
@@ -114,22 +124,32 @@ def main():
     @bot.message_handler(content_types=["photo"])
     def prompt_photo_handler(message: Message) -> None:
         s = message.caption
-        if not s or not s.startswith("prompt:"):
+        if not s or not s.startswith(("prompt:", "prompt_gem:")):
             return
-        if not openai_client:
+        if s.startswith("prompt:") and not openai_client:
             bot.reply_to(message, "OpenAI config not found.")
             prompt_handler(message)
             return
+        if s.startswith("prompt_gem:") and not gemini_client:
+            bot.reply_to(message, "Gemini config not found.")
+            prompt_handler(message)
+            return
+
         max_size_photo = max(message.photo, key=lambda p: p.file_size)
         file_path = bot.get_file(max_size_photo.file_id).file_path
         downloaded_file = bot.download_file(file_path)
         with open("temp.jpg", "wb") as temp_file:
             temp_file.write(downloaded_file)
         try:
-            s = pro_prompt_by_openai_vision(s, openai_args, openai_client)
-            bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
+            if s.startswith("prompt:"):
+                s = pro_prompt_by_openai_vision(s, openai_args, openai_client)
+                bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
+            else:
+                # gemini
+                s = pro_prompt_by_gemini_vision(s, gemini_client)
+                bot.reply_to(message, f"Rewrite image and prompt by gemini Vision: {s}")
         except Exception as e:
-            bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
+            bot.reply_to(message, "Something is wrong when rewriting your prompt.")
             print(str(e))
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
@@ -148,6 +168,30 @@ def main():
         try:
             s = pro_prompt_by_openai(s, openai_args, openai_client)
             bot.reply_to(message, f"Rewrite by GPT: {s}")
+        except Exception as e:
+            bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
+            print(str(e))
+
+        print(f"{message.from_user.id} send prompt: {s}")
+        respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
+
+    @bot.message_handler(commands=["prompt_gem"])
+    @bot.message_handler(regexp="^prompt_gem:")
+    def prompt_gemini_handler(message: Message) -> None:
+        s = extract_prompt(message, bot_name)
+        if not s:
+            return
+        if not gemini_client:
+            bot.reply_to(
+                message,
+                "Gemini config not found. please Export your Gemini key refer README",
+            )
+            prompt_handler(message)
+            return
+
+        try:
+            s = pro_prompt_by_gemini(s, gemini_client)
+            bot.reply_to(message, f"Rewrite by Gemini: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
             print(str(e))

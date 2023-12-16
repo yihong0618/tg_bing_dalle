@@ -9,7 +9,15 @@ Live Show: https://t.me/c/1941649644/2798
 In any chat with the bot, send your message like `prompt: something` or `/prompt something` or `@bot_name something`.
 You can also send your message like `/quota` or `quota?` or `@bot_name quota?` to get the limit.
 
-Using `/prompt_pro` or `prompt_pro:` will make use of GPT to rewrite your prompt.
+- Using `/prompt_pro` or `prompt_pro:` will make use of GPT to rewrite your prompt.
+- Using `/prompt_gem` or `prompt_gem:` will make use of gemini to rewrite your prompt.
+- You can also send image then use startsword, `prompt:`or `prompt_gem` to draw based on the picture  
+
+note if you want to use prompt_gem you need:
+
+1. visit https://makersuite.google.com/app/apikey get the key
+2. export GOOGLE_GEMINI_KEY=${the_key}
+ 
 
 ## How to
 
