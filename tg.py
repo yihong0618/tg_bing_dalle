@@ -58,11 +58,11 @@ def main():
     openai_args = config.get("openai_args", dict())
 
     # Setup Gemini
-    gemini_client = None
+    use_gemini_client = False
     GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
     if GOOGLE_GEMINI_KEY:
         genai.configure(api_key=GOOGLE_GEMINI_KEY)
-        gemini_client = make_gemini_client()
+        use_gemini_client = True
         print("Gemini init done.")
 
     # Init bot
@@ -75,7 +75,7 @@ def main():
     ]
     if openai_client:
         commands.append(BotCommand("prompt_pro", "prompt with GPT enhanced"))
-    if gemini_client:
+    if use_gemini_client:
         commands.append(BotCommand("prompt_gem", "prompt with gemini enhanced"))
     bot.set_my_commands(commands)
     print("Bot init done.")
@@ -130,7 +130,7 @@ def main():
             bot.reply_to(message, "OpenAI config not found.")
             prompt_handler(message)
             return
-        if s.startswith("prompt_gem:") and not gemini_client:
+        if s.startswith("prompt_gem:") and not use_gemini_client:
             bot.reply_to(message, "Gemini config not found.")
             prompt_handler(message)
             return
@@ -146,7 +146,7 @@ def main():
                 bot.reply_to(message, f"Rewrite image and prompt by GPT Vision: {s}")
             else:
                 # gemini
-                s = pro_prompt_by_gemini_vision(s, gemini_client)
+                s = pro_prompt_by_gemini_vision(s)
                 bot.reply_to(message, f"Rewrite image and prompt by gemini Vision: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when rewriting your prompt.")
@@ -181,7 +181,7 @@ def main():
         s = extract_prompt(message, bot_name)
         if not s:
             return
-        if not gemini_client:
+        if not use_gemini_client:
             bot.reply_to(
                 message,
                 "Gemini config not found. please Export your Gemini key refer README",
@@ -190,12 +190,13 @@ def main():
             return
 
         try:
+            # every time we make a new client, for now to fix connection bug
+            gemini_client = make_gemini_client()
             s = pro_prompt_by_gemini(s, gemini_client)
             bot.reply_to(message, f"Rewrite by Gemini: {s}")
         except Exception as e:
             bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
             print(str(e))
-
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
 

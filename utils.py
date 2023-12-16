@@ -120,8 +120,6 @@ def pro_prompt_by_openai(prompt: str, openai_args: dict, client: OpenAI) -> str:
 def pro_prompt_by_gemini(prompt: str, client) -> str:
     # TODO fix the type hint
     prompt = f"revise `{prompt}` to a DALL-E prompt, return the content in English only return the scene and detail"
-    if len(client.history) > 10:
-        client.history = player.history[2:]
     client.send_message(prompt)
     return client.last.text
 
@@ -164,7 +162,7 @@ def pro_prompt_by_openai_vision(prompt: str, openai_args: dict, client: OpenAI) 
     return res
 
 
-def pro_prompt_by_gemini_vision(prompt: str, client) -> str:
+def pro_prompt_by_gemini_vision(prompt) -> str:
     model = genai.GenerativeModel("gemini-pro-vision")
     image_path = Path("temp.jpg")
     image_data = image_path.read_bytes()
