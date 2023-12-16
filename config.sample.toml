@@ -27,3 +27,7 @@
 # OpenAI model to use
 model = "gpt-4-1106-preview"
 
+#=====================================
+# Uncomment to enable prompt revise by Google Gemini
+# [google_gemini]
+# api_key = ""

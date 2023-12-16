@@ -59,9 +59,12 @@ def main():
 
     # Setup Gemini
     use_gemini_client = False
+    gemini_conf: dict | None = config.get("google_gemini")
     GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
-    if GOOGLE_GEMINI_KEY:
-        genai.configure(api_key=GOOGLE_GEMINI_KEY)
+    if not gemini_conf and GOOGLE_GEMINI_KEY:
+        gemini_conf = {"api_key": GOOGLE_GEMINI_KEY}
+    if gemini_conf is not None:
+        genai.configure(**gemini_conf)
         use_gemini_client = True
         print("Gemini init done.")
 
@@ -195,7 +198,10 @@ def main():
             s = pro_prompt_by_gemini(s, gemini_client)
             bot.reply_to(message, f"Rewrite by Gemini: {s}")
         except Exception as e:
-            bot.reply_to(message, "Something is wrong when GPT rewriting your prompt.")
+            bot.reply_to(
+                message,
+                "Something is wrong when Gemini rewriting your prompt.",
+            )
             print(str(e))
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)

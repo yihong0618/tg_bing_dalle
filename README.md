@@ -16,7 +16,7 @@ You can also send your message like `/quota` or `quota?` or `@bot_name quota?` t
 note if you want to use prompt_gem you need:
 
 1. visit https://makersuite.google.com/app/apikey get the key
-2. export GOOGLE_GEMINI_KEY=${the_key}
+2. `export GOOGLE_GEMINI_KEY=${the_key}` or save in config.toml file
  
 
 ## How to
@@ -119,6 +119,10 @@ If you are running it using [Method 4 (Deploy to Fly.io)](#method-4-deploy-to-fl
 ```
 flyctl deploy -e config_file='config.toml'
 ```
+
+### Gemini Enhance
+
+To enable `prompt_gemini`, copy `config.sample.toml` to `config.toml`, and edit the file to setup your Gemini API.
 
 ### @bot
 
