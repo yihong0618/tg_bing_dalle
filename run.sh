@@ -7,12 +7,12 @@ config_file=""
 
 # Function to show usage
 usage() {
-    echo "Usage: $0 [-c <config_file>] [-x]"
+    echo "Usage: $0 [-c <config_file>]"
     exit 1
 }
 
 # Parse command-line options
-while getopts ":c" opt; do
+while getopts ":c:" opt; do
   case ${opt} in
     c ) config_file=$OPTARG
       ;;
@@ -57,10 +57,6 @@ python_cmd="${python_bin} -u tg.py '$tg_token'"
 # Load configurations from config file if specified
 if [ -n "$config_file" ]; then
   python_cmd="${python_cmd} -c '$config_file'"
-fi
-# Add Twitter replacement option if specified
-if [ -n "$twitter_replacement" ]; then
-  python_cmd="${python_cmd} ${twitter_replacement}"
 fi
 echo "Ready to run..."
 eval $python_cmd
