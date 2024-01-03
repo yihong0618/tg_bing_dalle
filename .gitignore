@@ -168,3 +168,4 @@ start.sh
 credentials/
 config.toml
 temp.jpg
+config.sample.toml
