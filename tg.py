@@ -6,7 +6,7 @@ from openai import OpenAI, AzureOpenAI
 import google.generativeai as genai
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
-from telebot import TeleBot  # type: ignore
+from telebot import TeleBot, apihelper  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
 from responder import respond_prompt, respond_quota
@@ -208,7 +208,9 @@ def main():
 
     # Start bot
     print("Starting tg bing DALL-E 3 images bot.")
-    bot.infinity_polling()
+    # see issue https://github.com/eternnoir/pyTelegramBotAPI/issues/1001
+    apihelper.RETRY_ON_ERROR = True
+    bot.infinity_polling(none_stop=True)
 
 
 if __name__ == "__main__":
