@@ -227,7 +227,7 @@ def main():
 
     # Start bot
     print("Starting tg bing DALL-E 3 images bot.")
-    bot.infinity_polling(timeout=40, long_polling_timeout=20)
+    bot.infinity_polling(timeout=10, long_polling_timeout=5)
 
 
 if __name__ == "__main__":
