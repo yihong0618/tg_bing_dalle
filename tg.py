@@ -6,6 +6,7 @@ from openai import OpenAI, AzureOpenAI
 import google.generativeai as genai
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
+from ideo import ImageGen as ImageGenIdeo  # type: ignore
 from telebot import TeleBot, apihelper  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
@@ -74,6 +75,7 @@ def main():
     bot.delete_my_commands(scope=None, language_code=None)
     commands = [
         BotCommand("prompt", "prompt of dalle-3"),
+        BotCommand("ideo", "prompt of https://ideogram.ai/"),
         BotCommand("quota", "cookie left quota"),
     ]
     if openai_client:
@@ -89,6 +91,12 @@ def main():
 
     bing_image_obj_list = [ImageGen(i) for i in set(bing_cookies_list)]
     bing_cookie_cnt = len(bing_image_obj_list)
+    env = os.environ
+    ideo_image_obj_list = [
+        ImageGenIdeo(
+            env.get("IDEO_COOKIE"), env.get("IDEO_USER_ID"), env.get("IDEO_AUTH_TOKEN")
+        )
+    ]
     for index, image_obj in enumerate(bing_image_obj_list):
         try:
             image_obj.get_limit_left()
@@ -96,6 +104,7 @@ def main():
             print(f"your {index} cookie is wrong please check error: {str(e)}")
             raise
     bing_cookie_pool = cycle(bing_image_obj_list)
+    ideo_cookie_pool = cycle(ideo_image_obj_list)
     print("BingImageCreator init done.")
 
     # Init local folder
@@ -123,6 +132,16 @@ def main():
             return
         print(f"{message.from_user.id} send prompt: {s}")
         respond_prompt(bot, message, bing_cookie_pool, bing_cookie_cnt, s)
+
+    @bot.message_handler(commands=["ideo"])
+    @bot.message_handler(regexp="^ideo:")
+    @bot.message_handler(regexp=f"^@{bot_name} ")
+    def prompt_handler(message: Message) -> None:
+        s = extract_prompt(message, bot_name)
+        if not s:
+            return
+        print(f"{message.from_user.id} send prompt: {s}")
+        respond_prompt(bot, message, ideo_cookie_pool, 1, s, is_ideo=True)
 
     @bot.message_handler(content_types=["photo"])
     def prompt_photo_handler(message: Message) -> None:
@@ -208,9 +227,8 @@ def main():
 
     # Start bot
     print("Starting tg bing DALL-E 3 images bot.")
-    # see issue https://github.com/eternnoir/pyTelegramBotAPI/issues/1001
-    apihelper.RETRY_ON_ERROR = True
-    bot.infinity_polling(none_stop=True)
+    bot.infinity_polling(timeout=40, long_polling_timeout=20)
+
 
 
 if __name__ == "__main__":
