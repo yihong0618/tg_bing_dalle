@@ -6,8 +6,7 @@ from openai import OpenAI, AzureOpenAI
 import google.generativeai as genai
 import toml  # type: ignore
 from BingImageCreator import ImageGen  # type: ignore
-from ideo import ImageGen as ImageGenIdeo  # type: ignore
-from telebot import TeleBot, apihelper  # type: ignore
+from telebot import TeleBot  # type: ignore
 from telebot.types import BotCommand, Message  # type: ignore
 
 from responder import respond_prompt, respond_quota
